@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Phone, ArrowUpRight, Menu, X, ChevronDown } from "lucide-react";
 import { Logo } from "./logo";
 import { services } from "@/lib/content/services";
@@ -20,6 +21,8 @@ const navGroups = [
     items: locations.map((l) => ({ label: `${l.city}, WA`, href: `/service-area/${l.slug}` })),
   },
 ];
+
+const homeLink = { label: "Home", href: "/" };
 
 const simpleLinks = [
   { label: "About", href: "/about" },
@@ -88,11 +91,18 @@ function NavDropdown({ label, href, items }: { label: string; href: string; item
 }
 
 export function Header() {
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [showBadge, setShowBadge] = useState(true);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 12);
+      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = scrollableHeight > 0 ? (window.scrollY / scrollableHeight) * 100 : 0;
+      setShowBadge(scrollPercent < 5);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -106,9 +116,17 @@ export function Header() {
             scrolled ? "shadow-[var(--shadow-elevated)]" : "shadow-[var(--shadow-soft)]"
           }`}
         >
-          <Logo />
+          <div onDoubleClick={() => router.push("/")}>
+            <Logo />
+          </div>
 
           <nav aria-label="Primary" className="hidden items-center justify-center gap-1 lg:flex">
+            <Link
+              href={homeLink.href}
+              className="rounded-full px-3.5 py-2 text-sm font-semibold text-foreground/70 transition-colors hover:bg-secondary hover:text-foreground"
+            >
+              {homeLink.label}
+            </Link>
             {navGroups.map((g) => (
               <NavDropdown key={g.href} {...g} />
             ))}
@@ -123,7 +141,7 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="relative flex items-center gap-2">
             <a
               href={siteConfig.phoneHref}
               className="hidden items-center gap-2 rounded-full border border-border-strong px-3.5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary sm:inline-flex"
@@ -135,6 +153,13 @@ export function Header() {
               Free estimate
               <ArrowUpRight className="h-4 w-4" />
             </Link>
+            <span
+              className={`pointer-events-none absolute right-0 top-full mt-2 hidden whitespace-nowrap rounded-lg bg-primary-deep px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-yellow shadow-[var(--shadow-soft)] transition-all duration-300 sm:block ${
+                showBadge ? "opacity-100 translate-y-0" : "-translate-y-1 opacity-0"
+              }`}
+            >
+              Contractor partnership welcome
+            </span>
             <button
               type="button"
               aria-label={open ? "Close menu" : "Open menu"}
@@ -150,6 +175,9 @@ export function Header() {
         {open && (
           <div className="mt-2 max-h-[80vh] overflow-y-auto rounded-2xl bg-surface-elevated p-3 shadow-[var(--shadow-elevated)] lg:hidden">
             <nav className="flex flex-col">
+              <Link href={homeLink.href} onClick={() => setOpen(false)} className="rounded-xl px-4 py-3 text-base font-medium text-foreground hover:bg-secondary">
+                {homeLink.label}
+              </Link>
               <Link href="/services" onClick={() => setOpen(false)} className="rounded-xl px-4 py-3 text-base font-medium text-foreground hover:bg-secondary">
                 Services
               </Link>

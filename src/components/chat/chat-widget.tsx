@@ -430,6 +430,7 @@ export function ChatWidget() {
               src="/chatbot/chatbot-avatar.png"
               alt="Chat with Gary's Pipelining"
               fill
+              sizes="108px"
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
             {unread > 0 ? (

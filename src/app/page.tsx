@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import backgroundTexture from "../../public/background/BACK.png";
 import {
   Phone,
   ShieldCheck,
@@ -66,7 +67,7 @@ export default function Home() {
 
       {/* HERO + TRUST STRIP background wrapper */}
       <div className="relative overflow-hidden">
-        <Image src="/background/BACK.png" alt="" aria-hidden fill className="pointer-events-none -translate-x-10 scale-110 object-cover opacity-[0.22]" />
+        <Image src={backgroundTexture} alt="" aria-hidden fill className="pointer-events-none -translate-x-10 scale-110 object-cover opacity-[0.22]" />
 
         {/* HERO */}
         <section className="relative overflow-hidden pb-20 pt-32 md:pb-28 md:pt-40">
@@ -147,7 +148,7 @@ export default function Home() {
               </div>
 
               <div className="absolute -right-4 -top-4 hidden h-20 w-20 overflow-hidden rounded-full border-4 border-background shadow-[var(--shadow-elevated)] md:block lg:-right-6 lg:-top-6 lg:h-24 lg:w-24">
-                <Image src="/brand/icon-circle.png" alt="Gary's Pipelining seal" fill className="object-cover" />
+                <Image src="/brand/icon-circle.png" alt="Gary's Pipelining seal" fill sizes="96px" className="object-cover" />
               </div>
             </div>
           </div>
@@ -156,6 +157,18 @@ export default function Home() {
 
         <TrustStrip />
       </div>
+
+      {/* UNDERGROUND POSITIONING */}
+      <section className="py-16 md:py-24">
+        <div className="container-px mx-auto max-w-[1400px]">
+          <Reveal className="mx-auto max-w-3xl text-center">
+            <p className="text-balance font-display text-2xl leading-snug tracking-tight text-ink md:text-4xl">
+              Most of what we do happens <span className="italic text-primary">underground, out of sight</span>.
+              You only ever see the result.
+            </p>
+          </Reveal>
+        </div>
+      </section>
 
       {/* SERVICES */}
       <section id="services" className="relative py-24 md:py-32">
@@ -173,17 +186,11 @@ export default function Home() {
           </Reveal>
 
           <RevealGroup className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3" stagger={0.08}>
-            {homeServices.map((s, i) => {
-              const row = Math.floor(i / 2);
-              const posInRow = i % 2;
-              const rowStartsLarge = row % 2 === 0;
-              const isLarge = posInRow === 0 ? rowStartsLarge : !rowStartsLarge;
-              return (
-                <RevealItem key={s.slug} className={isLarge ? "md:col-span-2 lg:col-span-2" : ""}>
-                  <ServiceCard service={s} large={isLarge} />
-                </RevealItem>
-              );
-            })}
+            {homeServices.map((s) => (
+              <RevealItem key={s.slug}>
+                <ServiceCard service={s} />
+              </RevealItem>
+            ))}
           </RevealGroup>
         </div>
       </section>

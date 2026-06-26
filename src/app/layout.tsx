@@ -1,24 +1,19 @@
 import type { Metadata } from "next";
-import { Poppins, Open_Sans } from "next/font/google";
+import { Source_Sans_3 } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { StickyMobileCta } from "@/components/layout/sticky-mobile-cta";
+import { StickyContactTab } from "@/components/layout/sticky-contact-tab";
 import { PageTransition } from "@/components/layout/page-transition";
 import { NavigationProgress } from "@/components/layout/navigation-progress";
 import { ChatWidget } from "@/components/chat/chat-widget";
 import { siteConfig } from "@/lib/site-config";
 
-const openSans = Open_Sans({
-  variable: "--font-open-sans",
+const sourceSans = Source_Sans_3({
+  variable: "--font-source-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700", "800"],
   style: ["normal", "italic"],
 });
 
@@ -57,7 +52,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${openSans.variable} ${poppins.variable} h-full antialiased`}
+      className={`${sourceSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <NavigationProgress />
@@ -66,6 +61,7 @@ export default function RootLayout({
           <PageTransition>{children}</PageTransition>
         </main>
         <Footer />
+        <StickyContactTab />
         <StickyMobileCta />
         <ChatWidget />
       </body>

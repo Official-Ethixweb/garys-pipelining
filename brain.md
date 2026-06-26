@@ -2,6 +2,17 @@
 
 Read this before doing anything else in this project. Saves re-discovery.
 
+**Brand/identity rules (logo, colors, typography, creative direction) live
+in `BRAND_GUIDELINES.md` at the repo root. That file is authoritative;
+read it before touching anything visual.**
+
+**GitHub remote**: whenever the user says "push" / "push to GitHub" /
+similar, with no other repo specified, push here:
+`https://github.com/HiddenSkyAkash/garys-pipelining-web.git`. It's wired
+up as the `origin` remote already (`git remote -v` to confirm). Push the
+current branch (`git push -u origin <branch>` if it has no upstream yet),
+don't assume `main` without checking what branch is actually checked out.
+
 ## What this is
 
 Full rebuild of garyspipelining.com (sewer/drain trenchless contractor,
@@ -21,13 +32,21 @@ disk; don't look for them.
 - Phone: (206) 535-8460, Email: office@garyspipelining.com
 - Address: 14101 Interurban Ave S, Unit 78-B, Tukwila, WA 98168
 - License: WA #GARYSPC881RE
-- Real logo is a cartoon-superhero clip-art mark (`public/brand/logo.png`).
-  User explicitly said **keep it exact, no redesign**. Don't put a box/
-  card around it (user removed that); just size it bigger, no wrapper.
-- Only 2 real verified Google reviews known (Kylie Barrett, Ronald
-  Imbert), don't fabricate more. One real 1-star review exists too
-  (not used, don't surface negative reviews, that's normal practice,
-  not dishonesty).
+- Logo, colors, typography: see `BRAND_GUIDELINES.md`. Short version:
+  the existing logo (`public/brand/logo.png`, `icon-circle.png`,
+  `src/app/icon.png`, `apple-icon.png`) is a cartoon-superhero mark and
+  it stays exactly as-is. Don't remove, replace, or redesign it, and
+  don't repeat the mistake of "fixing" it because a creative brief
+  mentions Space Ghost; that reference is tonal/conceptual only.
+- Real Google reviews: the live garyspipelining.com (WordPress) runs a
+  Trustindex widget synced to the real Google Business Profile, 4.5/5
+  from 10 reviews total. Pulled 5 real positive ones verbatim from that
+  widget's HTML (Alicia Vermaele, Kylie Barrett, Ronald Imbert, Brody,
+  Bob Blumenthal), used in `reviews-section.tsx`. One real 1-star
+  review also exists (Cape Breton) and is intentionally excluded, don't
+  surface negative reviews, that's normal practice, not dishonesty.
+  Don't fabricate additional reviewers/quotes beyond these 5; if more
+  are needed, re-pull from the live widget the same way, don't invent.
 - Don't invent stats like "25+ years" / "10k+ jobs", old site never
   stated tenure. Use qualitative claims only ("years of experience",
   "24/7", "licensed & insured").
@@ -40,17 +59,19 @@ disk; don't look for them.
 - `src/components/sections/service-page-template.tsx` /
   `location-page-template.tsx`, shared shells, driven by the content
   files above. 26 total pages, all passing `next build`.
-- Fonts: **Poppins** (headings) + **Open Sans** (body), self-hosted via
-  `next/font/google`, chosen for industry-standard contractor look +
-  performance/SEO. User explicitly disliked the original Inter +
-  Instrument Serif pairing, don't revert to it.
+- Fonts: **Source Sans 3** (single family, headings + body), self-hosted
+  via `next/font/google` as a variable font, loaded once in
+  `src/app/layout.tsx` and wired through `--font-display`/`--font-sans`
+  in `globals.css`. Earlier pairings (Poppins + Open Sans, then briefly
+  Inter + Instrument Serif) are retired; don't reintroduce a second
+  family or revert to either.
 - `public/photos/real/*`, actual job-site photos from the old site.
   `public/photos/stock/*`, supplementary curated photography (used only
   where no real photo exists, e.g. Bellevue/Federal Way location heroes).
   **Every single webp/asset in `public/` is wired into the site**, user
   asked for 100% asset utilization. If you add new images, use them
   somewhere or don't add them.
-- Contact form: React Hook Form + Zod → Web3Forms (`src/lib/web3forms.ts`).
+- Contact form: React Hook Form + Zod to Web3Forms (`src/lib/web3forms.ts`).
   Needs `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` in `.env.local` (see
   `.env.local.example`) to actually deliver email, currently unset.
 
@@ -89,7 +110,6 @@ disk; don't look for them.
    width/height, override both (matching the real file's aspect ratio),
    or the rendered image can end up wrong-sized. Don't pass just `height`
    without `width` on a static import.
-
 7. **Vercel deployment, three separate real causes, in order found**: (a)
    repo only had `create-next-app`'s day-1 commit, the real site was
    never actually committed, always `git add -A && git commit` and
@@ -104,6 +124,14 @@ disk; don't look for them.
    deployment exists. A clean build + 404 on literally every URL
    including the deployment's own unique link, with zero errors in the
    build log, means check Deployment Protection, not the code.
+8. **`next build` while a `next dev` server is running**: both share the
+   same `.next/` output directory; running `next build` concurrently with
+   a live `next dev` process can throw a spurious
+   `InvariantError: Expected workStore to be initialized` and abort the
+   build. Not a real code bug, find and stop the dev server PID first
+   (`netstat -ano | grep :3000`, confirm it's *this* project by curling it
+   and checking the page title, then `Stop-Process -Id <PID> -Force`),
+   optionally `rm -rf .next`, then rebuild.
 
 ## Verification habits that actually caught real bugs
 

@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch, type UseFormRegisterReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowRight, CircleCheck } from "lucide-react";
 import { services } from "@/lib/content/services";
+import { ServiceIcon } from "@/components/ui/service-icon";
 import { submitEstimateForm } from "@/lib/web3forms";
+import { siteConfig } from "@/lib/site-config";
 
 const schema = z.object({
   name: z.string().min(2, "Enter your full name"),
@@ -15,6 +17,8 @@ const schema = z.object({
   address: z.string().optional(),
   service: z.string().optional(),
   message: z.string().optional(),
+  commercialProperty: z.boolean().optional(),
+  smsConsent: z.boolean().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -24,11 +28,15 @@ export function EstimateForm({ defaultService }: { defaultService?: string }) {
   const {
     register,
     handleSubmit,
+    control,
+    setValue,
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { service: defaultService ?? "" },
+    defaultValues: { service: defaultService ?? "", commercialProperty: false, smsConsent: false },
   });
+
+  const selectedService = useWatch({ control, name: "service" });
 
   async function onSubmit(values: FormValues) {
     setError(null);
@@ -61,14 +69,14 @@ export function EstimateForm({ defaultService }: { defaultService?: string }) {
       <p className="-mt-2 text-sm text-muted-foreground">Typical response within 1 business hour.</p>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Full name" error={errors.name?.message}>
+        <Field label="Full name" required error={errors.name?.message}>
           <input
             {...register("name")}
             placeholder="Jane Smith"
             className="w-full rounded-2xl border border-border bg-background px-4 py-3.5 text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </Field>
-        <Field label="Phone" error={errors.phone?.message}>
+        <Field label="Phone" required error={errors.phone?.message}>
           <input
             {...register("phone")}
             type="tel"
@@ -96,29 +104,51 @@ export function EstimateForm({ defaultService }: { defaultService?: string }) {
       </Field>
 
       <div>
-        <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-muted-foreground">Service needed</label>
-        <select
-          {...register("service")}
-          defaultValue={defaultService ?? ""}
-          className="w-full rounded-2xl border border-border bg-background px-4 py-3.5 text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
-        >
-          <option value="">Select a service…</option>
-          {services.map((s) => (
-            <option key={s.slug} value={s.name}>
-              {s.name}
-            </option>
-          ))}
-          <option value="Not sure">Not sure, please diagnose</option>
-        </select>
+        <FieldLabel>Service needed</FieldLabel>
+        <input type="hidden" {...register("service")} />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {services.map((s) => {
+            const active = selectedService === s.name;
+            return (
+              <button
+                key={s.slug}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setValue("service", s.name, { shouldValidate: true, shouldDirty: true })}
+                className={`flex flex-col items-center gap-2 rounded-2xl border p-3 text-center text-xs font-medium leading-tight transition-colors ${
+                  active
+                    ? "border-primary bg-primary-soft text-primary"
+                    : "border-border bg-background text-foreground hover:border-border-strong"
+                }`}
+              >
+                <ServiceIcon name={s.icon} className="h-5 w-5" strokeWidth={1.6} />
+                {s.name}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div>
-        <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-muted-foreground">Describe the issue</label>
+        <FieldLabel>Describe the issue</FieldLabel>
         <textarea
           {...register("message")}
           rows={4}
           placeholder="Slow drain, backup, recurring clog, recent inspection report…"
           className="w-full resize-none rounded-2xl border border-border bg-background px-4 py-3.5 text-foreground placeholder:text-muted-foreground/60 outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
+        />
+      </div>
+
+      <div className="grid gap-3">
+        <CheckboxField
+          {...register("commercialProperty")}
+          label="Commercial property?"
+          hint="Let us know if this is for a business or rental, so we can route it to the right crew."
+        />
+        <CheckboxField
+          {...register("smsConsent")}
+          label="Communication consent"
+          hint={`By checking this box, you agree to receive calls and texts from ${siteConfig.shortName} about this request, including appointment confirmations and updates. Consent isn't required to use our services. Message and data rates may apply.`}
         />
       </div>
 
@@ -135,12 +165,60 @@ export function EstimateForm({ defaultService }: { defaultService?: string }) {
   );
 }
 
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+function FieldLabel({ children, required }: { children: React.ReactNode; required?: boolean }) {
+  return (
+    <label className="mb-2 block text-sm font-semibold text-ink">
+      {children}
+      {required && <span className="text-destructive"> *</span>}
+    </label>
+  );
+}
+
+function Field({
+  label,
+  required,
+  error,
+  children,
+}: {
+  label: string;
+  required?: boolean;
+  error?: string;
+  children: React.ReactNode;
+}) {
   return (
     <div>
-      <label className="mb-2 block text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</label>
+      <FieldLabel required={required}>{label}</FieldLabel>
       {children}
       {error && <p className="mt-1.5 text-xs text-emergency">{error}</p>}
     </div>
+  );
+}
+
+function CheckboxField({
+  label,
+  hint,
+  name,
+  onChange,
+  onBlur,
+  ref,
+}: {
+  label: string;
+  hint?: string;
+} & UseFormRegisterReturn) {
+  return (
+    <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-background p-4 transition-colors hover:border-border-strong">
+      <input
+        type="checkbox"
+        name={name}
+        onChange={onChange}
+        onBlur={onBlur}
+        ref={ref}
+        className="mt-0.5 h-4 w-4 shrink-0 rounded border-border-strong text-primary outline-none focus:ring-2 focus:ring-primary/20"
+      />
+      <span>
+        <span className="block text-sm font-semibold text-ink">{label}</span>
+        {hint && <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">{hint}</span>}
+      </span>
+    </label>
   );
 }

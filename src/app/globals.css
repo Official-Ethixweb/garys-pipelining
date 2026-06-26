@@ -46,8 +46,8 @@
   --color-surface-elevated: var(--surface-elevated);
   --color-ink: var(--ink);
 
-  --font-display: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
-  --font-sans: var(--font-open-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-source-sans), ui-sans-serif, system-ui, sans-serif;
 
   --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 12px rgb(15 23 42 / 0.05);
   --shadow-elevated: 0 10px 40px -10px rgb(15 42 95 / 0.18), 0 2px 6px rgb(15 23 42 / 0.04);

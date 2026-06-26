@@ -5,6 +5,8 @@ export type EstimateFormPayload = {
   address?: string;
   service?: string;
   message?: string;
+  commercialProperty?: boolean;
+  smsConsent?: boolean;
 };
 
 export async function submitEstimateForm(payload: EstimateFormPayload) {
