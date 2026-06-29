@@ -16,11 +16,13 @@ import {
   MapPin,
 } from "lucide-react";
 import { services } from "@/lib/content/services";
+import { locations } from "@/lib/content/locations";
 import { siteConfig, trustStats } from "@/lib/site-config";
 import { ServiceCard } from "@/components/sections/service-card";
 import { TrustStrip } from "@/components/sections/trust-strip";
 import { BeforeAfterSlider } from "@/components/sections/before-after-slider";
 import { ReviewsSection } from "@/components/sections/reviews-section";
+import { HomeCoverageSection } from "@/components/sections/home-coverage-section";
 import { FaqAccordion } from "@/components/ui/faq-accordion";
 import { EstimateForm } from "@/components/forms/estimate-form";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -115,7 +117,7 @@ export default function Home() {
               </dl>
             </div>
 
-            <div className="relative animate-fade-in-slow">
+            <div className="relative animate-fade-in-slow" style={{ transform: "translateY(15px)" }}>
               <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-[var(--shadow-premium)]">
                 <Image
                   src="/photos/real/job-02.webp"
@@ -137,7 +139,7 @@ export default function Home() {
                 <div className="absolute bottom-5 left-5 right-5 glass rounded-2xl p-4">
                   <div className="flex items-center gap-3">
                     <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-yellow text-yellow-foreground">
-                      <ShieldCheck className="h-5 w-5" />
+                      <ShieldCheck className="h-5 w-5 fill-yellow" stroke="#001B82" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="text-sm font-semibold text-ink">Real jobs. Real crews.</div>
@@ -155,11 +157,13 @@ export default function Home() {
         </div>
         </section>
 
-        <TrustStrip />
+        <Reveal>
+          <TrustStrip />
+        </Reveal>
       </div>
 
       {/* UNDERGROUND POSITIONING */}
-      <section className="py-16 md:py-24">
+      <section className="pt-16 md:pt-24">
         <div className="container-px mx-auto max-w-[1400px]">
           <Reveal className="mx-auto max-w-3xl text-center">
             <p className="text-balance font-display text-2xl leading-snug tracking-tight text-ink md:text-4xl">
@@ -374,7 +378,7 @@ export default function Home() {
           </Reveal>
 
           <div className="relative mt-20">
-            <div aria-hidden className="absolute left-0 right-0 top-7 hidden h-px bg-gradient-to-r from-transparent via-border-strong to-transparent md:block" />
+            <div aria-hidden className="absolute left-0 right-0 top-[33.6px] hidden h-px bg-gradient-to-r from-transparent via-border-strong to-transparent md:block" />
             <RevealGroup className="grid gap-10 md:grid-cols-5" stagger={0.1}>
               {[
                 { Icon: Search, title: "Inspection", body: "HD camera survey of your line, on video, in full color." },
@@ -384,8 +388,8 @@ export default function Home() {
                 { Icon: CircleCheck, title: "Completion", body: "Site restored. Written warranty in hand." },
               ].map((s, i) => (
                 <RevealItem key={s.title}>
-                  <div className="relative z-10 mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-surface-elevated text-primary shadow-[var(--shadow-soft)]" style={{ border: "1px solid var(--color-border)" }}>
-                    <s.Icon className="h-5 w-5" strokeWidth={1.7} />
+                  <div className="relative z-10 mx-auto grid h-[67.2px] w-[67.2px] place-items-center rounded-2xl bg-surface-elevated text-primary shadow-[var(--shadow-soft)]" style={{ border: "1px solid var(--color-border)" }}>
+                    <s.Icon className="h-6 w-6" strokeWidth={1.7} />
                   </div>
                   <div className="mt-5 text-center">
                     <div className="text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">Step {String(i + 1).padStart(2, "0")}</div>
@@ -399,9 +403,15 @@ export default function Home() {
         </div>
       </section>
 
-      <BeforeAfterSlider />
+      <Reveal>
+        <BeforeAfterSlider />
+      </Reveal>
 
       <ReviewsSection />
+
+      <Reveal>
+        <HomeCoverageSection locations={locations} />
+      </Reveal>
 
       {/* FAQ */}
       <section id="faq" className="bg-surface py-24 md:py-32">

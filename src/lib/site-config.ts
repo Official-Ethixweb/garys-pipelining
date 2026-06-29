@@ -21,6 +21,8 @@ export const siteConfig = {
   hours: "Open 24 hours, 7 days a week",
   mapEmbedSrc:
     "https://www.google.com/maps?q=14101+Interurban+Ave+S+Unit+78-B+Tukwila+WA+98168&output=embed",
+  directionsUrl:
+    "https://www.google.com/maps/dir/?api=1&destination=14101+Interurban+Ave+S+Unit+78-B+Tukwila+WA+98168",
   googleReviewsUrl:
     "https://www.google.com/maps/search/?api=1&query=Gary%27s+Pipelining+%26+Drain+Cleaning+14101+Interurban+Ave+S+Tukwila+WA+98168",
 } as const;

@@ -2,6 +2,7 @@ export type Location = {
   slug: string;
   city: string;
   state: "WA";
+  county: string;
   isHQ?: boolean;
   heroImage: string;
   intro: string;
@@ -14,6 +15,7 @@ export const locations: Location[] = [
     slug: "seattle-wa",
     city: "Seattle",
     state: "WA",
+    county: "King County",
     heroImage: "/photos/cities/seattle.webp",
     intro:
       "Seattle's housing stock spans everything from century-old Craftsman homes in Ballard and Wallingford to newer construction in SoDo and South Lake Union, which means sewer lines running the full range from aging clay and Orangeburg pipe to modern PVC. We work across the city, with trenchless methods that matter most on the older lots where digging means tearing up mature landscaping.",
@@ -28,6 +30,7 @@ export const locations: Location[] = [
     slug: "tacoma-wa",
     city: "Tacoma",
     state: "WA",
+    county: "Pierce County",
     heroImage: "/photos/cities/tacoma.webp",
     intro:
       "From the North End's older homes to newer development near Point Ruston, Tacoma properties see a similar mix of aging clay sewer lines and modern construction. We run regular routes through Tacoma for inspections, drain clearing, and trenchless repair.",
@@ -41,6 +44,7 @@ export const locations: Location[] = [
     slug: "bellevue-wa",
     city: "Bellevue",
     state: "WA",
+    county: "King County",
     heroImage: "/photos/stock/hero-technician.jpg",
     intro:
       "Bellevue's mix of established neighborhoods and high-value newer construction both benefit from trenchless methods, protecting mature landscaping on older lots and avoiding disruption to finished hardscape on newer ones.",
@@ -54,6 +58,7 @@ export const locations: Location[] = [
     slug: "renton-wa",
     city: "Renton",
     state: "WA",
+    county: "King County",
     heroImage: "/photos/cities/renton.webp",
     intro:
       "Renton sits close to our Tukwila home base, and it's one of our most frequent service areas, from older Highlands-area homes to newer development near the Landing. Fast response is the norm here, not the exception.",
@@ -67,6 +72,7 @@ export const locations: Location[] = [
     slug: "tukwila-wa",
     city: "Tukwila",
     state: "WA",
+    county: "King County",
     isHQ: true,
     heroImage: "/photos/real/job-05.webp",
     intro:
@@ -81,6 +87,7 @@ export const locations: Location[] = [
     slug: "federal-way-wa",
     city: "Federal Way",
     state: "WA",
+    county: "King County",
     heroImage: "/photos/stock/about-team.jpg",
     intro:
       "Federal Way's mix of older South King County homes and newer development means we see everything from root-damaged clay laterals to straightforward drain maintenance calls. We run regular service routes through the area.",

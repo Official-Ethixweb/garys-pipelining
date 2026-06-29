@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { ServiceIcon } from "@/components/ui/service-icon";
+import { ServiceBadge } from "@/components/ui/service-badge";
 import type { Service } from "@/lib/content/services";
 
 export function ServiceCard({ service }: { service: Service }) {
@@ -16,12 +16,7 @@ export function ServiceCard({ service }: { service: Service }) {
       )}
       <div>
         <div className="flex items-center">
-          <span
-            className="grid h-12 w-12 place-items-center rounded-2xl text-primary transition-transform duration-300 group-hover:scale-110"
-            style={{ background: "var(--color-primary-soft)" }}
-          >
-            <ServiceIcon name={service.icon} className="h-5 w-5" strokeWidth={1.6} />
-          </span>
+          <ServiceBadge name={service.icon} className="h-[4.55rem] w-[4.55rem] transition-transform duration-300 group-hover:scale-110" />
         </div>
         <h3 className="mt-6 text-2xl tracking-tight text-ink">{service.name}</h3>
         <p className="mt-3 max-w-md text-pretty text-[15px] leading-relaxed text-muted-foreground">{service.shortDescription}</p>

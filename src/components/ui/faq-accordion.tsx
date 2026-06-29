@@ -4,13 +4,12 @@ import { useState } from "react";
 import { Plus, Minus } from "lucide-react";
 import type { FaqItem } from "@/lib/content/services";
 
-function Item({ q, a, defaultOpen }: { q: string; a: string; defaultOpen: boolean }) {
-  const [open, setOpen] = useState(defaultOpen);
+function Item({ q, a, open, onToggle }: { q: string; a: string; open: boolean; onToggle: () => void }) {
   return (
     <div className="border-b border-border last:border-b-0">
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={onToggle}
         aria-expanded={open}
         className="grid w-full grid-cols-[1fr_auto] items-center gap-6 py-7 text-left"
       >
@@ -36,10 +35,18 @@ function Item({ q, a, defaultOpen }: { q: string; a: string; defaultOpen: boolea
 }
 
 export function FaqAccordion({ items }: { items: FaqItem[] }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
   return (
     <div className="rounded-[2rem] border border-border bg-surface-elevated px-6 md:px-10">
       {items.map((f, i) => (
-        <Item key={f.q} q={f.q} a={f.a} defaultOpen={i === 0} />
+        <Item
+          key={f.q}
+          q={f.q}
+          a={f.a}
+          open={openIndex === i}
+          onToggle={() => setOpenIndex((current) => (current === i ? null : i))}
+        />
       ))}
     </div>
   );

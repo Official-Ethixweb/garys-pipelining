@@ -34,6 +34,8 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-yellow: var(--brand-yellow);
   --color-yellow-foreground: var(--brand-yellow-foreground);
+  --color-yellow-light: var(--brand-yellow-light);
+  --color-yellow-deep: var(--brand-yellow-deep);
   --color-emergency: var(--emergency);
   --color-emergency-foreground: var(--emergency-foreground);
   --color-destructive: var(--destructive);
@@ -72,11 +74,11 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0.03 258);
 
-  /* Brand blue */
-  --primary: oklch(0.42 0.18 258);
+  /* Brand blue, Spaceghost palette: #001B82 / #00219E / #183CC7 */
+  --primary: #00219e;
   --primary-foreground: oklch(0.99 0.005 250);
-  --primary-deep: oklch(0.27 0.13 260);
-  --primary-soft: oklch(0.95 0.025 250);
+  --primary-deep: #001b82;
+  --primary-soft: color-mix(in oklab, #183cc7 12%, white);
 
   --secondary: oklch(0.96 0.012 250);
   --secondary-foreground: oklch(0.2 0.04 258);
@@ -87,9 +89,11 @@
   --accent: oklch(0.95 0.02 250);
   --accent-foreground: oklch(0.25 0.08 258);
 
-  /* Brand yellow */
-  --brand-yellow: oklch(0.86 0.16 92);
-  --brand-yellow-foreground: oklch(0.22 0.05 260);
+  /* Brand yellow, Spaceghost palette: #F9F900 / #FFFF4B / #FFFF85 */
+  --brand-yellow: #ffff4b;
+  --brand-yellow-foreground: #001b82;
+  --brand-yellow-light: #ffff85;
+  --brand-yellow-deep: #f9f900;
 
   /* Emergency red, only for emergency CTA */
   --emergency: oklch(0.58 0.22 25);
@@ -101,7 +105,7 @@
   --border: oklch(0.92 0.01 250);
   --border-strong: oklch(0.86 0.014 250);
   --input: oklch(0.92 0.01 250);
-  --ring: oklch(0.42 0.18 258);
+  --ring: #00219e;
 
   --radius: 1rem;
 }
@@ -167,6 +171,74 @@
   background: color-mix(in oklab, oklch(0.18 0.05 260) 60%, transparent);
   backdrop-filter: saturate(180%) blur(24px);
   border: 1px solid color-mix(in oklab, white 10%, transparent);
+}
+
+@utility header-glow-fx {
+  position: absolute;
+  overflow: hidden;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -45%;
+    background: radial-gradient(closest-side, color-mix(in oklab, var(--color-primary) 55%, white 12%) 0%, transparent 70%);
+    opacity: 0.22;
+    pointer-events: none;
+    will-change: transform;
+    animation: header-glow-drift 16s ease-in-out infinite;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 42%, color-mix(in oklab, white 8%, transparent) 50%, transparent 58%);
+    pointer-events: none;
+    will-change: transform;
+    animation: header-shimmer 7s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    &::before,
+    &::after {
+      animation: none;
+    }
+  }
+}
+
+@utility header-twinkle {
+  animation: header-twinkle 3.5s ease-in-out infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.55;
+  }
+}
+
+@keyframes header-twinkle {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes header-glow-drift {
+  0%,
+  100% {
+    transform: translate(-6%, -4%) scale(1);
+  }
+  50% {
+    transform: translate(8%, 6%) scale(1.15);
+  }
+}
+
+@keyframes header-shimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+  35%,
+  100% {
+    transform: translateX(160%);
+  }
 }
 
 @utility surface-card {

@@ -36,10 +36,10 @@ function StarRow({ rating, sizeClass = "h-4 w-4" }: { rating: number; sizeClass?
         const fill = Math.max(0, Math.min(1, rating - i));
         return (
           <span key={i} className={`relative inline-block ${sizeClass}`}>
-            <Star className={`absolute inset-0 ${sizeClass} text-border-strong`} />
+            <Star className={`absolute inset-0 ${sizeClass} text-border-strong`} strokeWidth={1.5} />
             {fill > 0 && (
               <span className="absolute inset-0 overflow-hidden" style={{ width: `${fill * 100}%` }}>
-                <Star className={`${sizeClass} fill-yellow text-yellow`} />
+                <Star className={`${sizeClass} fill-yellow`} stroke="#001B82" strokeWidth={1.5} />
               </span>
             )}
           </span>
@@ -68,7 +68,7 @@ export function ReviewsSection() {
           <div className="grid items-end gap-8 md:grid-cols-[1fr_auto]">
             <div>
               <span className="chip">
-                <Star className="h-3.5 w-3.5 fill-yellow text-yellow" /> Verified Google reviews
+                <Star className="h-3.5 w-3.5 fill-yellow" stroke="#001B82" strokeWidth={1.5} /> Verified Google reviews
               </span>
               <h2 className="mt-5 max-w-3xl text-balance text-4xl leading-[1.05] md:text-6xl">
                 The work speaks. <span className="italic text-muted-foreground">So do our customers.</span>
@@ -103,7 +103,11 @@ export function ReviewsSection() {
             style={{ animationDuration: MARQUEE_DURATION }}
           >
             {[...reviews, ...reviews].map((r, i) => (
-              <figure key={`${r.name}-${i}`} className="surface-card flex w-[360px] shrink-0 flex-col gap-5 p-6 sm:w-[410px]">
+              <figure
+                key={`${r.name}-${i}`}
+                className="surface-card flex w-[360px] shrink-0 flex-col gap-5 p-6 sm:w-[410px]"
+                style={{ border: "1px solid #001B82" }}
+              >
                 <StarRow rating={5} sizeClass="h-4 w-4" />
                 <blockquote className="line-clamp-5 text-pretty text-base leading-relaxed text-foreground">
                   &ldquo;{r.body}&rdquo;

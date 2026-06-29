@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, Phone, ArrowRight, ShieldCheck, MapPin } from "lucide-react";
+import { ChevronRight, Phone, ArrowRight, ArrowUpRight, ShieldCheck, MapPin } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
 import { ReviewsSection } from "@/components/sections/reviews-section";
 import { CtaBand } from "@/components/sections/cta-band";
@@ -132,7 +132,7 @@ export default function AboutPage() {
                 See everywhere we serve <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
-            <div className="relative aspect-[16/11] overflow-hidden rounded-[2rem] border border-border shadow-[var(--shadow-soft)]">
+            <div className="relative aspect-[16/11] overflow-hidden rounded-[2rem] border border-border shadow-[var(--shadow-elevated)]">
               <iframe
                 title="Map to our Tukwila office"
                 src={siteConfig.mapEmbedSrc}
@@ -142,6 +142,16 @@ export default function AboutPage() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
+              <div className="pointer-events-none absolute inset-x-4 bottom-4">
+                <a
+                  href={siteConfig.directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="glass pointer-events-auto inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-ink shadow-[var(--shadow-elevated)] transition-colors hover:bg-white"
+                >
+                  <MapPin className="h-4 w-4 text-primary" /> Get directions <ArrowUpRight className="h-3.5 w-3.5" />
+                </a>
+              </div>
             </div>
           </div>
         </div>

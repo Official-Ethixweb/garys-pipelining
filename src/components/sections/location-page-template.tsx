@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, MapPin, Phone, ShieldCheck, Clock } from "lucide-react";
+import { ChevronRight, MapPin, Phone, ShieldCheck, Clock, ArrowUpRight } from "lucide-react";
 import type { Location } from "@/lib/content/locations";
 import { services } from "@/lib/content/services";
 import { siteConfig } from "@/lib/site-config";
@@ -13,6 +13,7 @@ import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 
 export function LocationPageTemplate({ location }: { location: Location }) {
   const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(`${location.city}, ${location.state}`)}&output=embed`;
+  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${location.city}, ${location.state}`)}`;
 
   return (
     <div className="bg-background">
@@ -96,7 +97,7 @@ export function LocationPageTemplate({ location }: { location: Location }) {
                 ))}
               </ul>
             </div>
-            <div className="overflow-hidden rounded-[2rem] border border-border shadow-[var(--shadow-soft)]">
+            <div className="relative overflow-hidden rounded-[2rem] border border-border shadow-[var(--shadow-elevated)]">
               <iframe
                 title={`Map of ${location.city}, WA`}
                 src={mapSrc}
@@ -106,6 +107,19 @@ export function LocationPageTemplate({ location }: { location: Location }) {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
               />
+              <div className="pointer-events-none absolute inset-x-4 bottom-4 flex flex-wrap items-center justify-between gap-3">
+                <span className="glass pointer-events-auto inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-medium text-ink shadow-[var(--shadow-soft)]">
+                  <MapPin className="h-3.5 w-3.5 text-primary" /> {location.city}, {location.county}
+                </span>
+                <a
+                  href={directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary pointer-events-auto px-4 py-2.5 text-sm"
+                >
+                  Get directions <ArrowUpRight className="h-3.5 w-3.5" />
+                </a>
+              </div>
             </div>
           </Reveal>
         </div>

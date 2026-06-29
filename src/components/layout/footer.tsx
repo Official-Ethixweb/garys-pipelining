@@ -1,14 +1,39 @@
 import Link from "next/link";
-import { Phone, ArrowUpRight, Mail, MapPin } from "lucide-react";
+import { Phone, ArrowUpRight, Mail, MapPin, Sparkle } from "lucide-react";
 import { Logo } from "./logo";
 import { services } from "@/lib/content/services";
 import { locations } from "@/lib/content/locations";
 import { siteConfig } from "@/lib/site-config";
 
+const sparkles = [
+  { top: "10%", left: "5%", size: "h-2 w-2", delay: "0s" },
+  { top: "85%", left: "12%", size: "h-2.5 w-2.5", delay: "0.8s" },
+  { top: "25%", left: "28%", size: "h-2 w-2", delay: "1.6s" },
+  { top: "60%", left: "40%", size: "h-2.5 w-2.5", delay: "0.4s" },
+  { top: "15%", left: "55%", size: "h-2 w-2", delay: "1.2s" },
+  { top: "75%", left: "63%", size: "h-2.5 w-2.5", delay: "2s" },
+  { top: "35%", left: "78%", size: "h-2 w-2", delay: "0.6s" },
+  { top: "65%", left: "90%", size: "h-2.5 w-2.5", delay: "1.4s" },
+  { top: "90%", left: "48%", size: "h-2 w-2", delay: "1.8s" },
+];
+
+function FooterSparkleField() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0">
+      {sparkles.map((s, i) => (
+        <span key={i} className="header-twinkle absolute" style={{ top: s.top, left: s.left, animationDelay: s.delay }}>
+          <Sparkle className={`${s.size} fill-white/60 text-white/60`} />
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export function Footer() {
   return (
     <footer className="relative overflow-hidden text-white" style={{ background: "var(--gradient-hero)" }}>
       <div aria-hidden className="absolute inset-0 mesh-overlay opacity-40" />
+      <FooterSparkleField />
       <div className="container-px relative mx-auto max-w-[1400px] py-20">
         <div className="grid gap-14 lg:grid-cols-[1.1fr_2fr]">
           <div>
@@ -83,7 +108,25 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-16 grid gap-4 border-t border-white/10 pt-8 md:grid-cols-[1fr_auto] md:items-center">
+        <div className="mt-12 flex flex-wrap items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-yellow">
+            <MapPin className="h-3.5 w-3.5" /> Coverage
+          </span>
+          {locations.map((l) => (
+            <Link
+              key={l.slug}
+              href={`/service-area/${l.slug}`}
+              className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-medium text-white/80 transition-colors hover:bg-white/20 hover:text-white"
+            >
+              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-yellow" /> {l.city}
+            </Link>
+          ))}
+          <Link href="/service-area" className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-yellow link-underline">
+            Full coverage map <ArrowUpRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+
+        <div className="mt-8 grid gap-4 border-t border-white/10 pt-8 md:grid-cols-[1fr_auto] md:items-center">
           <p className="text-xs text-white/50">
             &copy; {new Date().getFullYear()} {siteConfig.legalName}. Licensed &amp; insured. All rights reserved.
           </p>

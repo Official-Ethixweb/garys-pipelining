@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, Send, Phone, ArrowUpRight, Mail } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
+import chatbotAvatar from "../../../public/chatbot/chatbot-avatar.png";
 
 type Message = {
   id: string;
@@ -134,7 +135,7 @@ function matchKeywordReply(text: string): React.ReactNode | null {
 function BotAvatar() {
   return (
     <span className="grid h-7 w-7 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-white">
-      <Image src="/chatbot/chatbot-avatar.png" alt="" width={28} height={28} className="h-full w-full object-cover" />
+      <Image src={chatbotAvatar} alt="" width={28} height={28} className="h-full w-full object-cover" />
     </span>
   );
 }
@@ -288,7 +289,7 @@ export function ChatWidget() {
               <div className="relative flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <span className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-full border-2 border-white/20 bg-white">
-                    <Image src="/chatbot/chatbot-avatar.png" alt="" width={44} height={44} className="h-full w-full object-cover" />
+                    <Image src={chatbotAvatar} alt="" width={44} height={44} className="h-full w-full object-cover" />
                   </span>
                   <div>
                     <div className="text-sm font-semibold text-white">Gary&apos;s Pipelining</div>
@@ -415,7 +416,7 @@ export function ChatWidget() {
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.92 }}
-            className="group relative grid h-[108px] w-[108px] place-items-center overflow-hidden rounded-full text-white shadow-[var(--shadow-premium)]"
+            className="group relative grid h-14 w-14 place-items-center overflow-hidden rounded-full text-white shadow-[var(--shadow-premium)] lg:h-[108px] lg:w-[108px]"
           >
             <span
               aria-hidden
@@ -427,18 +428,18 @@ export function ChatWidget() {
               }}
             />
             <Image
-              src="/chatbot/chatbot-avatar.png"
+              src={chatbotAvatar}
               alt="Chat with Gary's Pipelining"
               fill
-              sizes="108px"
+              sizes="(min-width: 1024px) 108px, 56px"
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
             {unread > 0 ? (
-              <span className="absolute -right-1 -top-1 grid h-6 w-6 place-items-center rounded-full border-2 border-background bg-emergency text-[11px] font-bold text-white">
+              <span className="absolute -right-0.5 -top-0.5 grid h-4 w-4 place-items-center rounded-full border-2 border-background bg-emergency text-[9px] font-bold text-white lg:-right-1 lg:-top-1 lg:h-6 lg:w-6 lg:text-[11px]">
                 {unread}
               </span>
             ) : (
-              <span className="absolute -right-0.5 -top-0.5 h-[18px] w-[18px] rounded-full border-2 border-background bg-yellow" />
+              <span className="absolute -right-0 -top-0 h-3 w-3 rounded-full border-2 border-background bg-yellow lg:-right-0.5 lg:-top-0.5 lg:h-[18px] lg:w-[18px]" />
             )}
           </motion.button>
         )}

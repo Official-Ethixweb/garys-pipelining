@@ -3,8 +3,9 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { locations } from "@/lib/content/locations";
 import { siteConfig } from "@/lib/site-config";
-import { LocationCard } from "@/components/sections/location-card";
+import { ServiceAreaMap } from "@/components/sections/service-area-map";
 import { CtaBand } from "@/components/sections/cta-band";
+import { Reveal } from "@/components/ui/reveal";
 
 export const metadata: Metadata = {
   title: "Service Areas",
@@ -36,11 +37,9 @@ export default function ServiceAreaPage() {
 
       <section className="pb-24 md:pb-32">
         <div className="container-px mx-auto max-w-[1400px]">
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {locations.map((l) => (
-              <LocationCard key={l.slug} location={l} />
-            ))}
-          </div>
+          <Reveal>
+            <ServiceAreaMap locations={locations} />
+          </Reveal>
         </div>
       </section>
 

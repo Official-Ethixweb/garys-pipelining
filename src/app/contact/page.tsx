@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ChevronRight, Phone, Mail, MapPin, Clock } from "lucide-react";
+import { ChevronRight, Phone, Mail, MapPin, Clock, ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
 import { EstimateForm } from "@/components/forms/estimate-form";
+import { Reveal } from "@/components/ui/reveal";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -92,17 +93,40 @@ export default async function ContactPage({
 
       <section className="pb-24 md:pb-32">
         <div className="container-px mx-auto max-w-[1400px]">
-          <div className="overflow-hidden rounded-[2rem] border border-border shadow-[var(--shadow-soft)]">
-            <iframe
-              title="Map to our Tukwila office"
-              src={siteConfig.mapEmbedSrc}
-              width="100%"
-              height="100%"
-              style={{ minHeight: 360, border: 0 }}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </div>
+          <Reveal>
+            <span className="chip">Find us</span>
+            <h2 className="mt-5 max-w-xl text-balance text-3xl leading-[1.05] md:text-4xl">Stop by the Tukwila shop.</h2>
+            <div className="relative mt-8 overflow-hidden rounded-[2rem] border border-border shadow-[var(--shadow-elevated)]">
+              <iframe
+                title="Map to our Tukwila office"
+                src={siteConfig.mapEmbedSrc}
+                width="100%"
+                height="100%"
+                style={{ minHeight: 420, border: 0 }}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+              <div className="pointer-events-none absolute inset-x-4 bottom-4 flex flex-wrap items-center justify-between gap-3 sm:inset-x-6 sm:bottom-6">
+                <div className="glass pointer-events-auto flex items-center gap-3 rounded-2xl px-4 py-3 shadow-[var(--shadow-elevated)]">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary text-primary-foreground">
+                    <MapPin className="h-5 w-5" />
+                  </span>
+                  <div className="min-w-0">
+                    <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Tukwila shop</div>
+                    <div className="truncate text-sm font-medium text-ink">{siteConfig.address.full}</div>
+                  </div>
+                </div>
+                <a
+                  href={siteConfig.directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary pointer-events-auto"
+                >
+                  Get directions <ArrowUpRight className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
     </div>
