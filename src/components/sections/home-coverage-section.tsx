@@ -16,7 +16,12 @@ export function HomeCoverageSection({ locations }: { locations: Location[] }) {
     <section className="relative py-24 md:py-32">
       <div className="container-px mx-auto max-w-[1400px]">
         <div className="grid items-center gap-12 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
-          <CoverageMapVisual locations={locations} activeSlug={activeSlug} onActivate={setActiveSlug} />
+          <CoverageMapVisual
+            locations={locations}
+            activeSlug={activeSlug}
+            onActivate={setActiveSlug}
+            className="-mx-6 rounded-none md:-mx-12 md:rounded-none lg:mx-0 lg:rounded-[2.5rem]"
+          />
 
           <div>
             <span className="chip">Service area</span>

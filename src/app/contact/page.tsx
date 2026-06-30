@@ -41,11 +41,11 @@ export default async function ContactPage({
           <div className="grid gap-10 overflow-hidden rounded-[2.5rem] lg:grid-cols-[1fr_1.1fr]" style={{ background: "var(--gradient-hero)" }}>
             <div className="relative flex flex-col p-10 md:p-14">
               <div aria-hidden className="absolute inset-0 mesh-overlay opacity-50" />
-              <div className="relative">
+              <div className="relative text-center lg:text-left">
                 <h2 className="text-balance text-3xl leading-[1.05] md:text-4xl" style={{ color: "white" }}>
                   Same-day callbacks during business hours.
                 </h2>
-                <p className="mt-4 max-w-md text-pretty text-white/70">
+                <p className="mx-auto mt-4 max-w-md text-pretty text-white/70 lg:mx-0">
                   After hours, use the emergency line for live dispatch, we&rsquo;re answered 24/7.
                 </p>
 
@@ -58,30 +58,32 @@ export default async function ContactPage({
                   ].map((c) => {
                     const content = (
                       <>
-                        <span className="grid h-11 w-11 place-items-center rounded-xl bg-white/10 text-white">
+                        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white/10 text-white">
                           <c.Icon className="h-5 w-5" />
                         </span>
-                        <div className="min-w-0 flex-1">
+                        <div className="min-w-0 flex-1 text-center lg:text-left">
                           <div className="text-xs uppercase tracking-wider text-white/50">{c.label}</div>
                           <div className="text-white">{c.value}</div>
                         </div>
                       </>
                     );
                     return c.href ? (
-                      <a key={c.label} href={c.href} className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/10">
+                      <a key={c.label} href={c.href} className="flex flex-col items-center gap-2 rounded-2xl border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/10 sm:flex-row sm:gap-4 lg:flex-row">
                         {content}
                       </a>
                     ) : (
-                      <div key={c.label} className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+                      <div key={c.label} className="flex flex-col items-center gap-2 rounded-2xl border border-white/10 bg-white/5 p-4 sm:flex-row sm:gap-4 lg:flex-row">
                         {content}
                       </div>
                     );
                   })}
                 </div>
 
-                <a href={siteConfig.phoneHref} className="btn-emergency mt-8">
-                  <Phone className="h-4 w-4" /> 24/7 Emergency Line
-                </a>
+                <div className="mt-8 flex justify-center lg:justify-start">
+                  <a href={siteConfig.phoneHref} className="btn-emergency">
+                    <Phone className="h-4 w-4" /> 24/7 Emergency Line
+                  </a>
+                </div>
               </div>
 
               <div className="relative mt-10 hidden flex-1 flex-col justify-center lg:flex">

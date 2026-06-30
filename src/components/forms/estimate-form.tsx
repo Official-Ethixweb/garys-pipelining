@@ -63,10 +63,10 @@ export function EstimateForm({ defaultService }: { defaultService?: string }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5" noValidate>
-      <h3 className="text-2xl tracking-tight text-ink md:text-3xl" style={{ fontFamily: "var(--font-sans)", fontWeight: 600 }}>
+      <h3 className="text-center text-2xl tracking-tight text-ink sm:text-left md:text-3xl" style={{ fontFamily: "var(--font-sans)", fontWeight: 600 }}>
         Request your free estimate
       </h3>
-      <p className="-mt-2 text-sm text-muted-foreground">Typical response within 1 business hour.</p>
+      <p className="-mt-2 text-center text-sm text-muted-foreground sm:text-left">Typical response within 1 business hour.</p>
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Full name" required error={errors.name?.message}>
@@ -154,7 +154,7 @@ export function EstimateForm({ defaultService }: { defaultService?: string }) {
 
       {error && <p className="text-sm text-emergency">{error}</p>}
 
-      <button type="submit" disabled={isSubmitting} className="btn-primary mt-2 justify-center text-base disabled:opacity-60">
+      <button type="submit" disabled={isSubmitting} className="btn-primary mt-2 w-full justify-center text-base disabled:opacity-60 sm:w-fit">
         {isSubmitting ? "Sending…" : "Send my request"}
         {!isSubmitting && <ArrowRight className="h-4 w-4" />}
       </button>

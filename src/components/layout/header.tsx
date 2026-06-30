@@ -214,7 +214,7 @@ export function Header() {
             ))}
           </div>
 
-          <div onDoubleClick={() => router.push("/")} className="relative z-10 col-start-1 flex origin-bottom translate-x-[30px] translate-y-[20px] scale-[1.45833]">
+          <div onDoubleClick={() => router.push("/")} className="relative z-10 col-start-1 flex translate-x-[14px] scale-[1.3]">
             <Logo size="header" />
           </div>
 

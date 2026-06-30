@@ -3,7 +3,7 @@ import Link from "next/link";
 import logo from "../../../public/brand/logo.svg";
 
 const SIZES = {
-  default: "h-[109.2px] w-auto sm:h-[124.8px] lg:h-[140.4px]",
+  default: "h-[142px] w-auto sm:h-[162px] lg:h-[182.5px]",
   // Sized to nearly fill the header bar's height (minus its fixed vertical padding), used in the header only.
   // Visually enlarged via a uniform transform scale in the header itself, this is the layout-box size,
   // which keeps the header bar's own height unaffected (CSS transforms don't participate in layout).

@@ -380,7 +380,7 @@ export default function Home() {
 
           <div className="relative mt-20">
             <div aria-hidden className="absolute left-0 right-0 top-[33.6px] hidden h-px bg-gradient-to-r from-transparent via-border-strong to-transparent md:block" />
-            <RevealGroup className="grid gap-10 md:grid-cols-5" stagger={0.1}>
+            <RevealGroup className="grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-2 md:grid-cols-5 md:gap-10" stagger={0.1}>
               {[
                 { Icon: Search, title: "Inspection", body: "HD camera survey of your line, on video, in full color." },
                 { Icon: Camera, title: "Diagnosis", body: "We walk you through the footage and the options, no jargon." },
@@ -388,7 +388,7 @@ export default function Home() {
                 { Icon: Droplets, title: "Testing", body: "Flow tested before we pack up." },
                 { Icon: CircleCheck, title: "Completion", body: "Site restored. Written warranty in hand." },
               ].map((s, i) => (
-                <RevealItem key={s.title}>
+                <RevealItem key={s.title} className={i === 4 ? "col-span-2 md:col-span-1" : ""}>
                   <div className="relative z-10 mx-auto grid h-[67.2px] w-[67.2px] place-items-center rounded-2xl bg-surface-elevated text-primary shadow-[var(--shadow-soft)]" style={{ border: "1px solid var(--color-border)" }}>
                     <s.Icon className="h-6 w-6" strokeWidth={1.7} />
                   </div>
@@ -442,14 +442,14 @@ export default function Home() {
           <div className="grid gap-10 overflow-hidden rounded-[2.5rem] lg:grid-cols-[1.05fr_1fr]" style={{ background: "var(--gradient-hero)" }}>
             <div className="relative flex flex-col p-10 md:p-14">
               <div aria-hidden className="absolute inset-0 mesh-overlay opacity-50" />
-              <div className="relative">
+              <div className="relative text-center lg:text-left">
                 <span className="chip" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)" }}>
                   Free estimate
                 </span>
                 <h2 className="mt-5 text-balance text-4xl leading-[1.05] md:text-5xl lg:text-6xl" style={{ color: "white" }}>
                   Tell us what&rsquo;s wrong. <span className="font-extrabold" style={{ color: "var(--color-yellow)" }}>We&rsquo;ll tell you what&rsquo;s right.</span>
                 </h2>
-                <p className="mt-6 max-w-md text-pretty text-white/70">
+                <p className="mx-auto mt-6 max-w-md text-pretty text-white/70 lg:mx-0">
                   Same-day callbacks during business hours. After hours? Use the emergency line below for live dispatch.
                 </p>
 
@@ -462,23 +462,25 @@ export default function Home() {
                     <a
                       key={c.label}
                       href={c.href}
-                      className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/10"
+                      className="group flex flex-col items-center gap-2 rounded-2xl border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/10 sm:flex-row sm:gap-4 lg:flex-row"
                     >
-                      <span className="grid h-11 w-11 place-items-center rounded-xl bg-white/10 text-white">
+                      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white/10 text-white">
                         <c.Icon className="h-5 w-5" />
                       </span>
-                      <div className="min-w-0 flex-1">
+                      <div className="min-w-0 flex-1 text-center sm:text-left lg:text-left">
                         <div className="text-xs uppercase tracking-wider text-white/50">{c.label}</div>
                         <div className="break-words text-white sm:truncate">{c.value}</div>
                       </div>
-                      {c.href && <ArrowUpRight className="h-4 w-4 text-white/60 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />}
+                      {c.href && <ArrowUpRight className="hidden h-4 w-4 shrink-0 text-white/60 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 sm:block" />}
                     </a>
                   ))}
                 </div>
 
-                <a href={siteConfig.phoneHref} className="btn-emergency mt-8">
-                  <Phone className="h-4 w-4" /> 24/7 Emergency Line
-                </a>
+                <div className="mt-8 flex justify-center lg:justify-start">
+                  <a href={siteConfig.phoneHref} className="btn-emergency">
+                    <Phone className="h-4 w-4" /> 24/7 Emergency Line
+                  </a>
+                </div>
               </div>
 
               <div className="relative mt-10 hidden flex-1 flex-col justify-center lg:flex">

@@ -295,7 +295,7 @@ export function CoverageMapVisual({
         </span>
       </div>
 
-      <div className="relative mt-7 aspect-[6/5] w-full overflow-hidden rounded-[1.75rem] sm:mt-9">
+      <div className="relative mt-7 aspect-square w-full overflow-hidden rounded-[1.75rem] sm:mt-9 lg:aspect-[6/5]">
         <div aria-hidden className="absolute inset-0" style={{ background: "oklch(0.16 0.07 258)" }} />
         <CityIslands id={mapId} positioned={positioned} />
         <RoadNetwork id={mapId} positioned={positioned} />
