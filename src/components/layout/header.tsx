@@ -188,16 +188,16 @@ export function Header() {
     <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "py-3" : "py-4"}`}>
       <div className="container-px relative mx-auto max-w-[1400px]">
         <div
-          className={`relative grid grid-cols-[auto_1fr_auto] items-center gap-4 rounded-full px-4 pt-3.5 pb-[4px] transition-all duration-500 ${
+          className={`relative grid grid-cols-[auto_1fr_auto] items-center gap-4 rounded-[1.75rem] px-4 pt-3.5 pb-[4px] transition-all duration-500 ${
             scrolled ? "shadow-[var(--shadow-elevated)]" : "shadow-[var(--shadow-soft)]"
           }`}
         >
           <div
             aria-hidden
-            className="header-glow-fx absolute inset-0 rounded-full"
+            className="header-glow-fx absolute inset-0 rounded-[1.75rem]"
             style={{ background: "var(--gradient-hero)", border: "1px solid color-mix(in oklab, white 10%, transparent)" }}
           />
-          <div aria-hidden className="absolute inset-0 hidden overflow-hidden rounded-full lg:block">
+          <div aria-hidden className="absolute inset-0 hidden overflow-hidden rounded-[1.75rem] lg:block">
             {headerStars.map((s, i) => (
               <Sparkle
                 key={`star-${i}`}
@@ -278,7 +278,7 @@ export function Header() {
               href={siteConfig.phoneHref}
               whileHover={{ scale: 1.02, boxShadow: PHONE_GLOW }}
               transition={{ duration: 0.3, ease: EASE }}
-              className="hidden items-center gap-2 rounded-full border border-white/20 px-3.5 py-2 text-sm font-medium text-white/85 transition-colors duration-300 hover:border-white/35 hover:text-white sm:inline-flex"
+              className="hidden items-center gap-2 rounded-xl border border-white/20 px-3.5 py-2 text-sm font-medium text-white/85 transition-colors duration-300 hover:border-white/35 hover:text-white sm:inline-flex"
             >
               <Phone className="h-4 w-4" />
               <span>{siteConfig.phone}</span>

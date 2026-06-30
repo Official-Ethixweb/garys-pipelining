@@ -20,7 +20,7 @@ export function StickyContactTab() {
       </Link>
       <a
         href={siteConfig.phoneHref}
-        className="group flex flex-col items-center gap-1.5 rounded-l-2xl border-y-2 border-l-2 border-dashed border-white/25 bg-emergency px-3 py-4 text-white shadow-[var(--shadow-elevated)] transition-transform duration-300 hover:-translate-x-1"
+        className="group flex flex-col items-center gap-1.5 rounded-l-2xl border-y-2 border-l-2 border-dashed border-white/25 bg-primary px-3 py-4 text-white shadow-[var(--shadow-elevated)] transition-transform duration-300 hover:-translate-x-1"
       >
         <Phone className="h-4 w-4" />
         <span className="text-center text-[11px] font-bold uppercase leading-tight tracking-wider">
