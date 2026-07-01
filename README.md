@@ -54,9 +54,11 @@ Never commit `.env*` files, they are already excluded via `.gitignore`.
 
 ## Key contacts
 
-- Client: Gary's Pipelining & Drain Cleaning (office@garyspipelining.com)
-- Amar, project manager
-- Akash, lead dev (akash@ethixweb.com)
+| Role | Name | Contact |
+| --- | --- | --- |
+| Client | Gary's Pipelining & Drain Cleaning | office@garyspipelining.com |
+| Project manager | Amar | |
+| Lead dev | Akash | |
 
 ## Project structure
 
