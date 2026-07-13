@@ -26,9 +26,6 @@ export function ReviewsSection() {
             <div className="mt-4 flex items-center gap-2.5">
               <GoogleMark className="h-6 w-6" />
               <StarRow rating={reviewSummary.rating} sizeClass="h-5 w-5" />
-              <p className="text-base text-muted-foreground">
-                Based on <span className="font-semibold text-ink">{reviewSummary.count} reviews</span>
-              </p>
             </div>
           </div>
         </Reveal>

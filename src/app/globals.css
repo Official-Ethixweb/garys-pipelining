@@ -122,6 +122,7 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv11";
+    font-size: 16px;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -218,6 +219,61 @@
   }
   50% {
     opacity: 0.95;
+  }
+}
+
+@utility star-neon {
+  animation: star-neon-pulse 3.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 3px currentColor) drop-shadow(0 0 8px currentColor);
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.85;
+  }
+}
+
+@keyframes star-neon-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    filter: drop-shadow(0 0 2px currentColor) drop-shadow(0 0 5px currentColor);
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 4px currentColor) drop-shadow(0 0 12px currentColor);
+  }
+}
+
+@utility panorama-badge-pulse {
+  animation: panorama-badge-pulse 2.4s ease-in-out infinite;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes panorama-badge-pulse {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(2px);
+  }
+}
+
+@utility panorama-hint-fade {
+  animation: panorama-hint-fade 4s ease-in-out 1 forwards;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes panorama-hint-fade {
+  0%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
 
@@ -393,26 +449,16 @@
   gap: 0.5rem;
   padding: 0.95rem 1.5rem;
   border-radius: var(--radius-lg);
-  border: 2px solid var(--color-primary);
-  background: var(--color-yellow);
-  color: var(--color-yellow-foreground);
+  background: var(--color-emergency);
+  color: var(--color-emergency-foreground);
   font-weight: 600;
   letter-spacing: -0.005em;
-  box-shadow: 0 10px 24px -10px color-mix(in oklab, var(--color-yellow) 70%, transparent), 0 0 0 0 color-mix(in oklab, var(--color-yellow) 60%, transparent);
-  transition: transform 0.2s, box-shadow 0.25s, background 0.25s, filter 0.25s;
-  position: relative;
-  &::after {
-    content: "";
-    position: absolute;
-    inset: -4px;
-    border-radius: inherit;
-    border: 2px solid color-mix(in oklab, var(--color-yellow) 50%, transparent);
-    opacity: 0;
-    animation: pulse-ring 2.4s ease-out infinite;
-  }
+  box-shadow: 0 10px 24px -10px color-mix(in oklab, var(--color-emergency) 60%, transparent);
+  transition: transform 0.2s, box-shadow 0.25s, filter 0.25s;
   &:hover {
     transform: translateY(-1px);
-    filter: brightness(1.03);
+    filter: brightness(1.05);
+    box-shadow: 0 16px 32px -12px color-mix(in oklab, var(--color-emergency) 70%, transparent);
   }
   &:active {
     transform: scale(0.97);
@@ -499,4 +545,149 @@
   &:hover::after {
     right: 0;
   }
+}
+
+/* ============================================================
+   ACCESSIBILITY WIDGET
+   ============================================================ */
+
+html {
+  font-size: calc(100% * var(--a11y-font-scale, 1));
+}
+
+html.a11y-custom-spacing body,
+html.a11y-custom-spacing :where(p, li, span, a, blockquote, h1, h2, h3, h4, h5, h6, button, label) {
+  letter-spacing: var(--a11y-letter-spacing) !important;
+}
+
+html.a11y-custom-leading body,
+html.a11y-custom-leading :where(p, li, blockquote) {
+  line-height: var(--a11y-line-height) !important;
+}
+
+html.a11y-align-left :where(p, li, blockquote) {
+  text-align: left !important;
+}
+html.a11y-align-center :where(p, li, blockquote) {
+  text-align: center !important;
+}
+html.a11y-align-right :where(p, li, blockquote) {
+  text-align: right !important;
+}
+html.a11y-align-justify :where(p, li, blockquote) {
+  text-align: justify !important;
+}
+
+html.a11y-invert img,
+html.a11y-invert video,
+html.a11y-invert picture,
+html.a11y-invert iframe {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+html.a11y-high-contrast {
+  --background: #ffffff;
+  --foreground: #000000;
+  --muted-foreground: #000000;
+  --border: #000000;
+  --border-strong: #000000;
+  --surface: #ffffff;
+  --surface-elevated: #ffffff;
+  --ink: #000000;
+}
+
+html.a11y-underline-links a {
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+}
+
+html.a11y-highlight-links a {
+  background: var(--brand-yellow-deep) !important;
+  color: #001b82 !important;
+  border-radius: 2px;
+  box-shadow: 0 0 0 2px var(--brand-yellow-deep);
+}
+
+html.a11y-highlight-headings h1,
+html.a11y-highlight-headings h2,
+html.a11y-highlight-headings h3,
+html.a11y-highlight-headings h4,
+html.a11y-highlight-headings h5,
+html.a11y-highlight-headings h6 {
+  outline: 3px solid var(--color-primary) !important;
+  outline-offset: 3px;
+  background: color-mix(in oklab, var(--brand-yellow) 30%, transparent) !important;
+}
+
+html.a11y-large-cursor,
+html.a11y-large-cursor * {
+  cursor:
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><path d="M6 2 L6 34 L14 26 L20 37 L25 34.5 L19 24 L30 24 Z" fill="black" stroke="white" stroke-width="2.5" stroke-linejoin="round"/></svg>')
+      4 4,
+    auto !important;
+}
+
+html.a11y-dyslexia-font body,
+html.a11y-dyslexia-font * {
+  font-family: "Comic Sans MS", "Comic Sans", Verdana, Tahoma, sans-serif !important;
+  word-spacing: 0.12em;
+}
+
+html.a11y-hide-images img {
+  visibility: hidden !important;
+}
+
+html.a11y-pause-animations *,
+html.a11y-pause-animations *::before,
+html.a11y-pause-animations *::after {
+  animation-play-state: paused !important;
+}
+
+html.a11y-reduce-motion *,
+html.a11y-reduce-motion *::before,
+html.a11y-reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+.a11y-reading-guide-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 44px;
+  pointer-events: none;
+  z-index: 2147483000;
+  background: color-mix(in oklab, var(--brand-yellow) 20%, transparent);
+  border-top: 2px solid var(--brand-yellow-deep);
+  border-bottom: 2px solid var(--brand-yellow-deep);
+}
+
+.a11y-reading-mask-panel {
+  position: fixed;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 2147483000;
+  background: rgba(0, 0, 0, 0.78);
+}
+
+.a11y-reading-highlight {
+  outline: 3px solid var(--color-yellow) !important;
+  outline-offset: 3px;
+  border-radius: 0.25rem;
+  background: color-mix(in oklab, var(--color-yellow) 22%, transparent) !important;
+  transition: background 0.2s ease;
+}
+
+.a11y-focus-ring:focus-visible {
+  outline: 2.5px solid var(--color-yellow);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+@utility a11y-panel-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--color-primary) 40%, transparent) transparent;
 }

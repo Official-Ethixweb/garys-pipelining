@@ -8,31 +8,39 @@ import { StarRow, GoogleMark } from "@/components/ui/google-rating";
 const INTERVAL_MS = 4000;
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-function ReviewCard({ review }: { review: Review }) {
+function ReviewCard({ review, compact = false }: { review: Review; compact?: boolean }) {
   return (
-    <div className="flex h-full flex-col gap-4 rounded-[1.75rem] border border-white/15 bg-white/[0.07] p-6 shadow-[var(--shadow-elevated)] backdrop-blur-sm">
+    <div
+      className={`flex h-full flex-col rounded-[1.75rem] border border-white/15 bg-white/[0.07] shadow-[var(--shadow-elevated)] backdrop-blur-sm ${
+        compact ? "gap-3 p-4" : "gap-4 p-6"
+      }`}
+    >
       <div className="flex items-center justify-between">
-        <StarRow rating={5} sizeClass="h-4 w-4" />
-        <GoogleMark className="h-5 w-5 shrink-0" />
+        <StarRow rating={5} sizeClass={compact ? "h-3.5 w-3.5" : "h-4 w-4"} />
+        <GoogleMark className={compact ? "h-4 w-4 shrink-0" : "h-5 w-5 shrink-0"} />
       </div>
       <blockquote
-        className="flex-1 text-pretty text-[15px] leading-relaxed text-white/90"
+        className={`flex-1 text-pretty leading-relaxed text-white/90 ${compact ? "text-[13px]" : "text-[15px]"}`}
         style={{
           display: "-webkit-box",
           WebkitBoxOrient: "vertical",
-          WebkitLineClamp: 6,
+          WebkitLineClamp: compact ? 5 : 6,
           overflow: "hidden",
         }}
       >
         &ldquo;{review.body}&rdquo;
       </blockquote>
-      <div className="flex items-center gap-3 border-t border-white/10 pt-4">
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-yellow text-sm font-semibold text-yellow-foreground">
+      <div className={`flex items-center gap-3 border-t border-white/10 ${compact ? "pt-3" : "pt-4"}`}>
+        <span
+          className={`grid shrink-0 place-items-center rounded-full bg-yellow font-semibold text-yellow-foreground ${
+            compact ? "h-7 w-7 text-xs" : "h-9 w-9 text-sm"
+          }`}
+        >
           {review.name.charAt(0)}
         </span>
         <div className="min-w-0">
-          <div className="truncate text-sm font-semibold text-white">{review.name}</div>
-          <div className="text-xs text-white/55">Verified Google review</div>
+          <div className={`truncate font-semibold text-white ${compact ? "text-xs" : "text-sm"}`}>{review.name}</div>
+          <div className={`text-white/55 ${compact ? "text-[10px]" : "text-xs"}`}>Verified Google review</div>
         </div>
       </div>
     </div>
@@ -96,6 +104,11 @@ export function TestimonialCarousel({
     exit: { opacity: 0, [axis]: -offset },
   };
 
+  const isHorizontal = orientation === "horizontal";
+  const visibleReviews = isHorizontal
+    ? [reviews[index], reviews[(index + 1) % reviews.length]]
+    : [reviews[index]];
+
   return (
     <div
       className={`relative ${className}`}
@@ -104,7 +117,7 @@ export function TestimonialCarousel({
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <div className="relative h-[340px] overflow-hidden sm:h-[320px]">
+      <div className={isHorizontal ? "relative h-[260px] overflow-hidden" : "relative h-[340px] overflow-hidden sm:h-[320px]"}>
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={index}
@@ -112,9 +125,11 @@ export function TestimonialCarousel({
             animate={reducedMotion ? { opacity: 1 } : variants.center}
             exit={reducedMotion ? { opacity: 0 } : variants.exit}
             transition={{ duration: reducedMotion ? 0.15 : 0.45, ease: EASE }}
-            className="absolute inset-0"
+            className={isHorizontal ? "absolute inset-0 grid grid-cols-2 gap-4" : "absolute inset-0"}
           >
-            <ReviewCard review={reviews[index]} />
+            {visibleReviews.map((r, i) => (
+              <ReviewCard key={`${r.name}-${i}`} review={r} compact={isHorizontal} />
+            ))}
           </motion.div>
         </AnimatePresence>
       </div>

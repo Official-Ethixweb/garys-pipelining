@@ -9,6 +9,7 @@ import {
   CircleCheck,
   Mail,
   MapPin,
+  Sparkle,
 } from "lucide-react";
 import { services } from "@/lib/content/services";
 import { locations } from "@/lib/content/locations";
@@ -30,6 +31,17 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   alternates: { canonical: "/" },
 };
+
+const whyGarysStars = [
+  { top: "10%", left: "8%", size: 10, delay: 0.2 },
+  { top: "72%", left: "14%", size: 8, delay: 1.4 },
+  { top: "18%", left: "38%", size: 7, delay: 0.8 },
+  { top: "85%", left: "46%", size: 9, delay: 2.1 },
+  { top: "22%", left: "62%", size: 8, delay: 1.1 },
+  { top: "65%", left: "80%", size: 11, delay: 0.5 },
+  { top: "12%", left: "88%", size: 7, delay: 1.9 },
+  { top: "48%", left: "94%", size: 9, delay: 0.9 },
+];
 
 const homeFaqs = [
   {
@@ -124,10 +136,10 @@ export default function Home() {
             <div className="relative mx-auto w-4/5 animate-fade-in-slow">
               <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-[var(--shadow-premium)]">
                 <Image
-                  src="/photos/real/job-02.webp"
+                  src="/photos/PLACE.png"
                   width={1200}
                   height={1500}
-                  alt="Gary's Pipelining crew working a trenchless sewer access pit"
+                  alt="Gary's Pipelining shop in Tukwila, Washington"
                   className="h-full w-full object-cover"
                   sizes="(min-width: 1024px) 45vw, 100vw"
                   priority
@@ -155,7 +167,7 @@ export default function Home() {
               </div>
 
               <div className="absolute -right-4 -top-4 hidden h-20 w-20 overflow-hidden rounded-full border-4 border-background shadow-[var(--shadow-elevated)] md:block lg:-right-6 lg:-top-6 lg:h-24 lg:w-24">
-                <Image src="/brand/icon-circle.png" alt="Gary's Pipelining seal" fill sizes="96px" className="object-cover" />
+                <Image src="/New Assets/circlelogo gary's.svg" alt="Gary's Pipelining seal" fill sizes="96px" className="scale-[1.16] object-cover" />
               </div>
             </div>
           </div>
@@ -335,6 +347,15 @@ export default function Home() {
       {/* WHY CHOOSE */}
       <section className="relative overflow-hidden py-24 md:py-32 noise" style={{ background: "var(--gradient-hero)", color: "white" }}>
         <div aria-hidden className="absolute inset-0 mesh-overlay opacity-50" />
+        <div aria-hidden className="absolute inset-0 overflow-hidden">
+          {whyGarysStars.map((s, i) => (
+            <Sparkle
+              key={`why-garys-star-${i}`}
+              className="header-twinkle absolute text-white/70"
+              style={{ top: s.top, left: s.left, width: s.size, height: s.size, animationDelay: `${s.delay}s` }}
+            />
+          ))}
+        </div>
         <div className="container-px relative mx-auto max-w-[1400px]">
           <Reveal>
             <span className="chip" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)" }}>

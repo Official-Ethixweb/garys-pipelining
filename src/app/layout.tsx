@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Source_Sans_3 } from "next/font/google";
-import { MotionConfig } from "framer-motion";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -8,7 +7,9 @@ import { StickyMobileCta } from "@/components/layout/sticky-mobile-cta";
 import { StickyContactTab } from "@/components/layout/sticky-contact-tab";
 import { PageTransition } from "@/components/layout/page-transition";
 import { NavigationProgress } from "@/components/layout/navigation-progress";
+import { MotionPreferenceProvider } from "@/components/layout/motion-preference-provider";
 import { ChatWidget } from "@/components/chat/chat-widget-lazy";
+import { AccessibilityWidget } from "@/components/accessibility/accessibility-widget";
 import { siteConfig } from "@/lib/site-config";
 
 const sourceSans = Source_Sans_3({
@@ -55,7 +56,7 @@ export default function RootLayout({
       className={`${sourceSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <MotionConfig reducedMotion="user">
+        <MotionPreferenceProvider>
           <NavigationProgress />
           <Header />
           <main className="flex-1">
@@ -65,7 +66,8 @@ export default function RootLayout({
           <StickyContactTab />
           <StickyMobileCta />
           <ChatWidget />
-        </MotionConfig>
+          <AccessibilityWidget />
+        </MotionPreferenceProvider>
       </body>
     </html>
   );

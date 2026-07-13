@@ -330,13 +330,13 @@ export function ChatWidget() {
 
             {/* Quick actions bar */}
             <div className="shrink-0 border-t border-border bg-surface/60 px-3 py-2.5">
-              <div className="flex gap-1.5 overflow-x-auto pb-1">
+              <div className="grid grid-cols-3 gap-1.5">
                 {quickActions.map((qa) => (
                   <button
                     key={qa.key}
                     type="button"
                     onClick={() => handleQuickAction(qa)}
-                    className="shrink-0 whitespace-nowrap rounded-full border border-border-strong bg-surface-elevated px-3 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-primary hover:text-primary"
+                    className="rounded-xl border border-border-strong bg-surface-elevated px-2 py-2 text-center text-xs font-medium leading-tight text-foreground transition-colors hover:border-primary hover:text-primary"
                   >
                     {qa.shortLabel}
                   </button>

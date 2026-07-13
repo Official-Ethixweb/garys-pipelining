@@ -30,28 +30,13 @@ const navGroups = [
   },
 ];
 
-const headerStars = [
-  { top: "15%", left: "32%", size: 9, delay: 0.4 },
-  { top: "78%", left: "45%", size: 7, delay: 1.8 },
-  { top: "20%", left: "68%", size: 12, delay: 0 },
-  { top: "72%", left: "74%", size: 9, delay: 1.1 },
-  { top: "42%", left: "55%", size: 7, delay: 2.2 },
-  { top: "30%", left: "88%", size: 8, delay: 1.5 },
-];
-
-const headerGlitterDots = [
-  { top: "12%", left: "28%", size: 1.5, delay: 0.6 },
-  { top: "85%", left: "36%", size: 2, delay: 1.4 },
-  { top: "18%", left: "50%", size: 1.5, delay: 0.2 },
-  { top: "65%", left: "42%", size: 2, delay: 2.1 },
-  { top: "15%", left: "65%", size: 2.5, delay: 0.3 },
-  { top: "55%", left: "70%", size: 2, delay: 1.6 },
-  { top: "80%", left: "67%", size: 1.5, delay: 0.8 },
-  { top: "30%", left: "77%", size: 2, delay: 2.5 },
-  { top: "65%", left: "61%", size: 1.5, delay: 1.2 },
-  { top: "10%", left: "73%", size: 1.5, delay: 2 },
-  { top: "75%", left: "85%", size: 1.5, delay: 1.9 },
-  { top: "22%", left: "92%", size: 2, delay: 0.9 },
+const headerCornerStars = [
+  { top: "22%", left: "0.8%", size: 10, delay: 0.2 },
+  { top: "68%", left: "2.6%", size: 7, delay: 1.3 },
+  { top: "45%", left: "4.8%", size: 9, delay: 0.7 },
+  { top: "18%", left: "94.5%", size: 9, delay: 0.5 },
+  { top: "70%", left: "96.8%", size: 11, delay: 1.6 },
+  { top: "44%", left: "99%", size: 7, delay: 2 },
 ];
 
 const homeLink = { label: "Home", href: "/" };
@@ -116,7 +101,7 @@ function NavDropdown({
         aria-expanded={open}
         aria-haspopup="menu"
         onClick={() => setOpen((v) => !v)}
-        className="relative z-10 inline-flex items-center gap-1 rounded-full px-3.5 py-2 text-base font-semibold text-white/75 transition-colors duration-300 hover:text-white"
+        className="relative z-10 inline-flex items-center gap-1 rounded-full px-3.5 py-2 text-lg font-semibold text-white/75 transition-colors duration-300 hover:text-white"
       >
         {label}
         <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
@@ -185,36 +170,27 @@ export function Header() {
   }, []);
 
   return (
-    <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "py-3" : "py-4"}`}>
+    <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "pb-3" : "pb-4"}`}>
       <div className="container-px relative mx-auto max-w-[1400px]">
-        <div
-          className={`relative grid grid-cols-[auto_1fr_auto] items-center gap-4 rounded-[1.75rem] px-4 pt-3.5 pb-[4px] transition-all duration-500 ${
-            scrolled ? "shadow-[var(--shadow-elevated)]" : "shadow-[var(--shadow-soft)]"
-          }`}
-        >
+        <div className="relative grid grid-cols-[auto_1fr_auto] items-center gap-4 px-4 pt-3.5 pb-[4px] transition-all duration-500">
           <div
             aria-hidden
-            className="header-glow-fx absolute inset-0 rounded-[1.75rem]"
-            style={{ background: "var(--gradient-hero)", border: "1px solid color-mix(in oklab, white 10%, transparent)" }}
+            className={`header-glow-fx absolute inset-y-0 left-1/2 right-1/2 w-screen -mx-[50vw] transition-shadow duration-500 ${
+              scrolled ? "shadow-[var(--shadow-elevated)]" : "shadow-[var(--shadow-soft)]"
+            }`}
+            style={{ background: "var(--gradient-hero)", borderBottom: "1px solid color-mix(in oklab, white 10%, transparent)" }}
           />
-          <div aria-hidden className="absolute inset-0 hidden overflow-hidden rounded-[1.75rem] lg:block">
-            {headerStars.map((s, i) => (
+          <div aria-hidden className="absolute inset-y-0 left-1/2 right-1/2 hidden w-screen -mx-[50vw] overflow-hidden lg:block">
+            {headerCornerStars.map((s, i) => (
               <Sparkle
-                key={`star-${i}`}
-                className="header-twinkle absolute text-white/80"
+                key={`corner-star-${i}`}
+                className="star-neon absolute text-yellow"
                 style={{ top: s.top, left: s.left, width: s.size, height: s.size, animationDelay: `${s.delay}s` }}
-              />
-            ))}
-            {headerGlitterDots.map((d, i) => (
-              <span
-                key={`dot-${i}`}
-                className="header-twinkle absolute rounded-full bg-white/70"
-                style={{ top: d.top, left: d.left, width: d.size, height: d.size, animationDelay: `${d.delay}s` }}
               />
             ))}
           </div>
 
-          <div onDoubleClick={() => router.push("/")} className="relative z-10 col-start-1 flex translate-x-[24px] scale-[2.077] lg:translate-x-[34px] lg:translate-y-[5px]">
+          <div onDoubleClick={() => router.push("/")} className="relative z-10 col-start-1 flex translate-x-[24px] scale-[2.389] lg:translate-x-[34px] lg:translate-y-[5px]">
             <Logo size="header" />
           </div>
 
@@ -234,7 +210,7 @@ export function Header() {
               )}
               <Link
                 href={homeLink.href}
-                className={`relative z-10 inline-flex rounded-full px-3.5 py-2 text-base font-semibold transition-colors duration-300 ${
+                className={`relative z-10 inline-flex rounded-full px-3.5 py-2 text-lg font-semibold transition-colors duration-300 ${
                   isHrefActive(pathname, homeLink.href) ? "text-white" : "text-white/75 hover:text-white"
                 }`}
               >
@@ -263,7 +239,7 @@ export function Header() {
                 )}
                 <Link
                   href={n.href}
-                  className={`relative z-10 inline-flex rounded-full px-3.5 py-2 text-base font-semibold transition-colors duration-300 ${
+                  className={`relative z-10 inline-flex rounded-full px-3.5 py-2 text-lg font-semibold transition-colors duration-300 ${
                     isHrefActive(pathname, n.href) ? "text-white" : "text-white/75 hover:text-white"
                   }`}
                 >

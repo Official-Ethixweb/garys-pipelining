@@ -82,22 +82,29 @@ export function LocationPageTemplate({ location }: { location: Location }) {
       </section>
 
       {/* Local notes + map */}
-      <section className="bg-surface py-24 md:py-32">
+      <section className="py-24 md:py-32" style={{ background: "var(--color-primary-deep)" }}>
         <div className="container-px mx-auto max-w-[1400px]">
           <Reveal className="grid gap-12 lg:grid-cols-2 lg:gap-16">
             <div>
-              <span className="chip">Local knowledge</span>
-              <h2 className="mt-5 text-balance text-3xl leading-[1.1] md:text-4xl">What we see most in {location.city}</h2>
+              <span
+                className="chip"
+                style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.85)" }}
+              >
+                Local knowledge
+              </span>
+              <h2 className="mt-5 text-balance text-3xl leading-[1.1] md:text-4xl" style={{ color: "white" }}>
+                What we see most in {location.city}
+              </h2>
               <ul className="mt-7 grid gap-4">
                 {location.localNotes.map((note) => (
-                  <li key={note} className="flex gap-3 text-base leading-relaxed text-foreground/85">
-                    <span aria-hidden className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                  <li key={note} className="flex gap-3 text-base leading-relaxed text-white/75">
+                    <span aria-hidden className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-yellow" />
                     {note}
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="relative overflow-hidden rounded-[2rem] border border-border shadow-[var(--shadow-elevated)]">
+            <div className="relative overflow-hidden rounded-[2rem] border border-white/15 shadow-[var(--shadow-elevated)]">
               <iframe
                 title={`Map of ${location.city}, WA`}
                 src={mapSrc}

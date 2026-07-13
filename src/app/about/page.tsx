@@ -5,12 +5,24 @@ import { ChevronRight, Phone, ArrowRight, ArrowUpRight, ShieldCheck, MapPin, Spa
 import { siteConfig } from "@/lib/site-config";
 import { ReviewsSection } from "@/components/sections/reviews-section";
 import { CtaBand } from "@/components/sections/cta-band";
+import { PhotoGallery } from "@/components/ui/photo-gallery";
+import { PanoramaViewer } from "@/components/ui/panorama-viewer";
 
 export const metadata: Metadata = {
   title: "About Us",
   description: `${siteConfig.shortName} is a licensed, Tukwila-based trenchless sewer and drain contractor serving the greater Seattle area, available 24/7.`,
   alternates: { canonical: "/about" },
 };
+
+const galleryPhotos = [
+  { src: "/photos/real/job-01.webp", alt: "Sewer line excavation in progress" },
+  { src: "/photos/real/job-02.webp", alt: "Crew working a trenchless access pit" },
+  { src: "/photos/real/job-04.webp", alt: "Trenchless access pit with pipe exposed" },
+  { src: "/photos/real/job-06.webp", alt: "Drain line cleared on a residential job" },
+  { src: "/photos/real/job-07.webp", alt: "Gary's Pipelining crew on site" },
+  { src: "/photos/real/job-08.webp", alt: "Drain cleaning equipment staged on site" },
+  { src: "/photos/real/job-09.webp", alt: "Sump pump installation in progress" },
+];
 
 const values = [
   {
@@ -80,13 +92,20 @@ export default function AboutPage() {
             </div>
             <div className="relative mx-auto w-4/5">
               <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-[var(--shadow-premium)]">
-                <Image src="/photos/real/job-03.webp" alt="Gary's Pipelining technician at work" fill priority sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
+                <Image src="/photos/PLACE.png" alt="Gary's Pipelining shop in Tukwila, Washington" fill priority sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
                 <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 50%, rgba(13,20,40,0.55) 100%)" }} />
                 <div className="absolute left-5 top-5 glass rounded-2xl px-3.5 py-2.5 text-xs font-medium">
                   <span className="flex items-center gap-2">
                     <ShieldCheck className="h-4 w-4 text-primary" /> {siteConfig.license}
                   </span>
                 </div>
+                <div className="absolute inset-x-6 bottom-7">
+                  <div className="h-px w-10 bg-yellow" />
+                  <p className="mt-3 text-balance font-display text-xl leading-snug text-white sm:text-2xl">
+                    {siteConfig.tagline}
+                  </p>
+                </div>
+                <PanoramaViewer src="/photos/PLACE.png" alt="Gary's Pipelining shop in Tukwila, Washington" />
               </div>
             </div>
           </div>
@@ -192,24 +211,7 @@ export default function AboutPage() {
               No stock photography, these are pulled straight from our own jobs across the greater Seattle area.
             </p>
           </div>
-          <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {[
-              { src: "/photos/real/job-01.webp", alt: "Sewer line excavation in progress" },
-              { src: "/photos/real/job-02.webp", alt: "Crew working a trenchless access pit" },
-              { src: "/photos/real/job-04.webp", alt: "Trenchless access pit with pipe exposed" },
-              { src: "/photos/real/job-06.webp", alt: "Drain line cleared on a residential job" },
-              { src: "/photos/real/job-07.webp", alt: "Gary's Pipelining crew on site" },
-              { src: "/photos/real/job-08.webp", alt: "Drain cleaning equipment staged on site" },
-              { src: "/photos/real/job-09.webp", alt: "Sump pump installation in progress" },
-            ].map((p, i) => (
-              <div
-                key={p.src}
-                className={`relative aspect-square overflow-hidden rounded-2xl border border-border ${i === 0 ? "col-span-2 row-span-2 aspect-square sm:aspect-auto" : ""}`}
-              >
-                <Image src={p.src} alt={p.alt} fill loading="lazy" sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover transition-transform duration-700 hover:scale-105" />
-              </div>
-            ))}
-          </div>
+          <PhotoGallery photos={galleryPhotos} className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4" />
         </div>
       </section>
 

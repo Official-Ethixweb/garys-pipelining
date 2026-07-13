@@ -44,11 +44,11 @@ export function BeforeAfterSlider() {
                 />
                 <div className="absolute inset-0 bg-black/15" />
                 <div className="absolute bottom-6 left-6 inline-flex items-center gap-2 rounded-full bg-black/60 px-3 py-1.5 text-xs font-medium text-white backdrop-blur">
-                  Traditional dig
+                  Before
                 </div>
               </div>
               <div className="absolute right-6 top-6 inline-flex items-center gap-2 rounded-full bg-white/90 px-3 py-1.5 text-xs font-semibold text-ink backdrop-blur">
-                Trenchless result
+                After
               </div>
 
               <div className="pointer-events-none absolute top-0 bottom-0" style={{ left: `calc(${pos}% - 1px)` }}>
