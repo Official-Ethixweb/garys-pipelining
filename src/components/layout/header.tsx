@@ -294,9 +294,9 @@ export function Header() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.22, ease: EASE }}
-              className="mt-2 max-h-[80vh] overflow-y-auto rounded-2xl bg-surface-elevated p-3 shadow-[var(--shadow-elevated)] lg:hidden"
+              className="absolute left-1/2 right-1/2 top-full mt-2 w-screen -mx-[50vw] max-h-[80vh] overflow-y-auto bg-surface-elevated shadow-[var(--shadow-elevated)] lg:hidden"
             >
-              <nav className="flex flex-col">
+              <nav className="container-px mx-auto flex max-w-[1400px] flex-col py-3">
                 {[homeLink, { label: "Services", href: "/services" }, { label: "Service Areas", href: "/service-area" }, ...simpleLinks].map(
                   (n) => (
                     <Link
@@ -312,14 +312,6 @@ export function Header() {
                   )
                 )}
               </nav>
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                <a href={siteConfig.phoneHref} className="btn-ghost justify-center">
-                  <Phone className="h-4 w-4" /> Call
-                </a>
-                <Link href="/contact" className="btn-primary justify-center">
-                  Estimate <ArrowUpRight className="h-4 w-4" />
-                </Link>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>
