@@ -294,7 +294,7 @@ export function Header() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.22, ease: EASE }}
-              className="absolute left-1/2 right-1/2 top-full mt-2 w-screen -mx-[50vw] max-h-[80vh] overflow-y-auto rounded-b-[2rem] bg-surface-elevated shadow-[var(--shadow-elevated)] lg:hidden"
+              className="absolute left-1/2 right-1/2 top-full w-screen -mx-[50vw] max-h-[80vh] overflow-y-auto rounded-b-[2rem] bg-surface-elevated shadow-[var(--shadow-elevated)] lg:hidden"
             >
               <nav className="container-px mx-auto flex max-w-[1400px] flex-col py-3">
                 {[homeLink, { label: "Services", href: "/services" }, { label: "Service Areas", href: "/service-area" }, ...simpleLinks].map(
