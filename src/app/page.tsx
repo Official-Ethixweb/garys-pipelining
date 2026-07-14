@@ -136,7 +136,7 @@ export default function Home() {
             <div className="relative mx-auto w-4/5 animate-fade-in-slow">
               <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-[var(--shadow-premium)]">
                 <Image
-                  src="/photos/PLACE.png"
+                  src="/photos/hero-about.png"
                   width={1200}
                   height={1500}
                   alt="Gary's Pipelining shop in Tukwila, Washington"
