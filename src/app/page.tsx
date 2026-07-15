@@ -137,14 +137,15 @@ export default function Home() {
 
             <div className="relative mx-auto w-4/5 animate-fade-in-slow">
               <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-[var(--shadow-premium)]">
-                <Image
-                  src="/photos/hero-about.png"
-                  width={1200}
-                  height={1500}
-                  alt="Gary's Pipelining shop in Tukwila, Washington"
+                <video
+                  src="/Hero%20Vid/VN20260715_191030.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  aria-label="Gary's Pipelining crew at work"
                   className="h-full w-full object-cover"
-                  sizes="(min-width: 1024px) 45vw, 100vw"
-                  priority
                 />
                 <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 40%, rgba(13,20,40,0.55) 100%)" }} />
 
