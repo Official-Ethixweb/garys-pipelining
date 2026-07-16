@@ -105,7 +105,7 @@ export default function Home() {
                 Seattle area without tearing up your yard, driveway, or weekend, for homeowners and contractors alike.
               </p>
 
-              <div className="mt-9 grid grid-cols-2 items-center gap-3 sm:flex sm:flex-wrap">
+              <div className="mt-9 hidden items-center gap-3 sm:flex sm:flex-wrap">
                 <Link
                   href="/contact"
                   className="btn-primary !gap-1.5 !whitespace-nowrap !px-4 !py-2.5 !text-sm sm:!gap-2 sm:!px-6 sm:!py-[0.95rem] sm:!text-[0.95rem]"
