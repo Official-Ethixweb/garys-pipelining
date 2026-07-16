@@ -92,7 +92,7 @@ export default function AboutPage() {
             </div>
             <div className="relative mx-auto w-4/5">
               <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-[var(--shadow-premium)]">
-                <Image src="/photos/hero-about.png" alt="Gary's Pipelining shop in Tukwila, Washington" fill priority sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
+                <Image src="/photos/hero-about.webp" alt="Gary's Pipelining shop in Tukwila, Washington" fill priority sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
                 <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 50%, rgba(13,20,40,0.55) 100%)" }} />
                 <div className="absolute left-5 top-5 glass rounded-2xl px-3.5 py-2.5 text-xs font-medium">
                   <span className="flex items-center gap-2">
@@ -105,7 +105,7 @@ export default function AboutPage() {
                     {siteConfig.tagline}
                   </p>
                 </div>
-                <PanoramaViewer src="/photos/hero-about.png" alt="Gary's Pipelining shop in Tukwila, Washington" />
+                <PanoramaViewer src="/photos/hero-about.webp" alt="Gary's Pipelining shop in Tukwila, Washington" />
               </div>
             </div>
           </div>
