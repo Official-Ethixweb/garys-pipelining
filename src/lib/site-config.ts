@@ -27,6 +27,12 @@ export const siteConfig = {
     "https://www.google.com/maps/search/?api=1&query=Gary%27s+Pipelining+%26+Drain+Cleaning+14101+Interurban+Ave+S+Tukwila+WA+98168",
 } as const;
 
+// Vercel sets VERCEL_ENV to "production" only for the production deployment;
+// preview/branch deploys get "preview" or "development". Falls back to
+// NODE_ENV for non-Vercel hosts. Used to keep preview URLs out of search
+// results (robots.txt, per-page robots meta) without touching prod behavior.
+export const isProduction = (process.env.VERCEL_ENV ?? process.env.NODE_ENV) === "production";
+
 export const trustStats = [
   { value: "24/7", label: "Emergency response", icon: "/brand/credibility/emergency.svg" },
   { value: "100%", label: "Licensed & insured crew", icon: "/brand/credibility/licensed-insured.svg" },

@@ -15,7 +15,7 @@ const cspDirectives = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' blob: data:",
   "font-src 'self'",
-  "connect-src 'self' https://api.web3forms.com",
+  "connect-src 'self'",
   "frame-src https://www.google.com",
   "object-src 'none'",
   "base-uri 'self'",

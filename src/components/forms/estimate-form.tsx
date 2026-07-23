@@ -7,7 +7,7 @@ import { z } from "zod";
 import { ArrowRight, CircleCheck, MoreHorizontal } from "lucide-react";
 import { services } from "@/lib/content/services";
 import { ServiceIcon } from "@/components/ui/service-icon";
-import { submitEstimateForm } from "@/lib/web3forms";
+import { submitLead } from "@/lib/send-lead";
 import { siteConfig } from "@/lib/site-config";
 
 const schema = z.object({
@@ -46,7 +46,20 @@ export function EstimateForm({ defaultService }: { defaultService?: string }) {
   async function onSubmit(values: FormValues) {
     setError(null);
     try {
-      await submitEstimateForm(values);
+      await submitLead({
+        source: "estimate",
+        name: values.name,
+        phone: values.phone,
+        email: values.email || undefined,
+        botcheck: values.botcheck,
+        fields: [
+          { label: "Address", value: values.address ?? "" },
+          { label: "Service needed", value: values.service ?? "" },
+          { label: "Describe the issue", value: values.message ?? "" },
+          { label: "Commercial property", value: values.commercialProperty ? "Yes" : "No" },
+          { label: "SMS consent", value: values.smsConsent ? "Yes" : "No" },
+        ],
+      });
     } catch {
       setError("We couldn't send your request automatically. Please call us instead, we'd rather hear from you than lose the message.");
     }

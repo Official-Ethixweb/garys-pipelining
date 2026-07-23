@@ -2,12 +2,22 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, Send, Phone, ArrowUpRight, Mail, MessageCircle } from "lucide-react";
+import { X, Send, Phone, Mail, MessageCircle, Sparkles, CircleCheck } from "lucide-react";
 import { siteConfig } from "@/lib/site-config";
 import chatbotAvatar from "../../../public/chatbot/chatbot-avatar.jpg";
 import { SparkleField } from "@/components/ui/sparkle-field";
+import {
+  detectContactInfo,
+  getSmartReply,
+  initialChatContext,
+  isValidEmail,
+  isValidName,
+  isValidPhone,
+  type ChatContext,
+} from "@/lib/chat/engine";
+import { topicLabel } from "@/lib/chat/knowledge";
+import { submitLead, type TranscriptMessage } from "@/lib/send-lead";
 
 // Flip to true to restore the original avatar photo (chatbotAvatar) in all three spots below.
 const SHOW_CHAT_AVATAR_IMAGE = false;
@@ -18,125 +28,29 @@ type Message = {
   content: React.ReactNode;
 };
 
-type QuickAction = {
-  key: string;
-  label: string;
-  shortLabel: string;
-  reply: () => React.ReactNode;
-};
+type QuickAction = { key: string; label: string; shortLabel: string; triggerText: string };
+
+type LeadStep = "idle" | "offer" | "name" | "phone" | "email" | "confirm" | "submitting" | "done" | "error";
+type LeadState = { step: LeadStep; name?: string; phone?: string; email?: string };
 
 let idCounter = 0;
 const nextId = () => `m${++idCounter}`;
 
 const GREETING = (
   <>
-    Hi, I&apos;m the Gary&apos;s Pipelining assistant. I can point you to the right service, your service area, or a
-    fast way to reach a real person. What do you need help with?
+    Hi, I&apos;m the Gary&apos;s Pipelining assistant. Ask me about a service, your area, pricing, or just tell me
+    what&apos;s going on, I&apos;ll get you the right answer or a real person.
   </>
 );
 
-const quickActions: QuickAction[] = [
-  {
-    key: "estimate",
-    label: "Get a free estimate",
-    shortLabel: "Free estimate",
-    reply: () => (
-      <>
-        Happy to help. The fastest way is our estimate form, typical response within 1 business hour during the
-        day.{" "}
-        <Link href="/contact" className="font-semibold text-primary link-underline">
-          Open the estimate form
-        </Link>
-        . Or call us directly at{" "}
-        <a href={siteConfig.phoneHref} className="font-semibold text-primary link-underline">
-          {siteConfig.phone}
-        </a>
-        .
-      </>
-    ),
-  },
-  {
-    key: "emergency",
-    label: "This is an emergency",
-    shortLabel: "Emergency",
-    reply: () => (
-      <>
-        <p>Got it. Call our 24/7 emergency line right now, a live dispatcher answers around the clock.</p>
-        <a href={siteConfig.phoneHref} className="btn-emergency mt-3 w-fit text-sm">
-          <Phone className="h-3.5 w-3.5" /> {siteConfig.phone}
-        </a>
-      </>
-    ),
-  },
-  {
-    key: "services",
-    label: "What services do you offer",
-    shortLabel: "Services",
-    reply: () => (
-      <>
-        We handle trenchless sewer repair, pipe bursting, sewer replacement, water main repair, sewer camera
-        inspection, drain cleaning, hydro jetting, rooter service, and sump pump installation.{" "}
-        <Link href="/services" className="inline-flex items-center gap-1 font-semibold text-primary link-underline">
-          See all services <ArrowUpRight className="h-3 w-3" />
-        </Link>
-      </>
-    ),
-  },
-  {
-    key: "areas",
-    label: "Do you serve my area",
-    shortLabel: "Service areas",
-    reply: () => (
-      <>
-        We&apos;re based in Tukwila and serve Seattle, Tacoma, Bellevue, Renton, Tukwila, and Federal Way, plus much
-        of the greater Puget Sound region.{" "}
-        <Link href="/service-area" className="inline-flex items-center gap-1 font-semibold text-primary link-underline">
-          Check your city <ArrowUpRight className="h-3 w-3" />
-        </Link>
-      </>
-    ),
-  },
-  {
-    key: "pricing",
-    label: "How does pricing work",
-    shortLabel: "Pricing",
-    reply: () => (
-      <>
-        Every job starts with a camera inspection, then a written, flat-rate estimate before any work begins. The
-        number we quote is the number you pay, no surprise change orders.
-      </>
-    ),
-  },
-  {
-    key: "human",
-    label: "Talk to a real person",
-    shortLabel: "Talk to a human",
-    reply: () => (
-      <>
-        Of course. Call {siteConfig.phone} or email{" "}
-        <a href={siteConfig.emailHref} className="font-semibold text-primary link-underline">
-          {siteConfig.email}
-        </a>
-        , a real person picks up, not a robot.
-      </>
-    ),
-  },
+const DEFAULT_QUICK_ACTIONS: QuickAction[] = [
+  { key: "estimate", label: "Get a free estimate", shortLabel: "Free estimate", triggerText: "I'd like a free estimate" },
+  { key: "emergency", label: "This is an emergency", shortLabel: "Emergency", triggerText: "This is an emergency" },
+  { key: "services", label: "What services do you offer", shortLabel: "Services", triggerText: "What services do you offer?" },
+  { key: "areas", label: "Do you serve my area", shortLabel: "Service areas", triggerText: "Do you serve my area?" },
+  { key: "pricing", label: "How does pricing work", shortLabel: "Pricing", triggerText: "How does pricing work?" },
+  { key: "human", label: "Talk to a real person", shortLabel: "Talk to a human", triggerText: "I want to talk to a real person" },
 ];
-
-const quickActionByKey: Record<string, QuickAction> = Object.fromEntries(quickActions.map((qa) => [qa.key, qa]));
-
-function matchKeywordReply(text: string): React.ReactNode | null {
-  const t = text.toLowerCase();
-  if (/(emergency|urgent|flood|backup|leak|burst|now)/.test(t)) return quickActionByKey.emergency.reply();
-  if (/(price|cost|estimate|quote|how much)/.test(t)) return quickActionByKey.estimate.reply();
-  if (/(service|trenchless|drain|sewer|hydro|jet|camera|pipe|rooter|sump)/.test(t)) return quickActionByKey.services.reply();
-  if (/(area|location|seattle|tacoma|tukwila|renton|bellevue|federal way|city)/.test(t)) return quickActionByKey.areas.reply();
-  if (/(call|phone|email|contact|human|person)/.test(t)) return quickActionByKey.human.reply();
-  if (/(hour|open|24|time)/.test(t)) return <>We&apos;re answered 24 hours a day, 7 days a week, including the emergency line.</>;
-  if (/(warrant|guarantee)/.test(t))
-    return <>Trenchless work carries a written workmanship warranty. Ask your technician for the specifics on your job.</>;
-  return null;
-}
 
 function BotAvatar() {
   if (SHOW_CHAT_AVATAR_IMAGE) {
@@ -176,6 +90,19 @@ function TypingIndicator() {
   );
 }
 
+function ActionButton({ label, onClick, disabled }: { label: string; onClick: () => void; disabled?: boolean }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className="rounded-xl border border-border-strong bg-surface-elevated px-2 py-2 text-center text-xs font-medium leading-tight text-foreground transition-colors hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {label}
+    </button>
+  );
+}
+
 export function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([{ id: nextId(), from: "bot", content: GREETING }]);
@@ -183,9 +110,17 @@ export function ChatWidget() {
   const [typing, setTyping] = useState(false);
   const [teaser, setTeaser] = useState(false);
   const [unread, setUnread] = useState(0);
+  const [ctx, setCtx] = useState<ChatContext>(initialChatContext);
+  const [lead, setLead] = useState<LeadState>({ step: "idle" });
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const transcriptRef = useRef<TranscriptMessage[]>([{ from: "bot", text: "Greeted the visitor" }]);
+  const leadRef = useRef<LeadState>(lead);
+
+  useEffect(() => {
+    leadRef.current = lead;
+  }, [lead]);
 
   useEffect(() => {
     if (sessionStorage.getItem("gp_chat_teaser_seen")) return;
@@ -226,39 +161,226 @@ export function ChatWidget() {
     };
   }, [open]);
 
-  function pushBotReply(content: React.ReactNode) {
+  function pushUserMessage(text: string) {
+    setMessages((m) => [...m, { id: nextId(), from: "user", content: text }]);
+    transcriptRef.current.push({ from: "user", text });
+  }
+
+  function pushBotReply(content: React.ReactNode, logLabel: string, onDone?: () => void) {
     setTyping(true);
     setTimeout(() => {
       setTyping(false);
       setMessages((m) => [...m, { id: nextId(), from: "bot", content }]);
+      transcriptRef.current.push({ from: "bot", text: logLabel });
       if (!open) setUnread((u) => u + 1);
+      onDone?.();
     }, 700);
   }
 
+  function offerLeadCapture() {
+    setCtx((c) => ({ ...c, leadOffered: true }));
+    setLead({ step: "offer" });
+    pushBotReply(
+      <>Want me to have a technician follow up? I just need a name and phone number, no obligation.</>,
+      "Offered to collect contact info"
+    );
+  }
+
+  function startLeadCapture(prefill: { phone?: string; email?: string }, autoDetected: boolean) {
+    setCtx((c) => ({ ...c, leadOffered: true }));
+    setLead({ step: "name", phone: prefill.phone, email: prefill.email });
+    pushBotReply(
+      autoDetected ? <>Thanks, I&apos;ve got that. What name should I put with it?</> : <>Great, what&apos;s your name?</>,
+      "Detected contact info and started lead capture"
+    );
+  }
+
+  function confirmReply(l: LeadState): React.ReactNode {
+    return (
+      <>
+        <p>Here&apos;s what I&apos;ve got:</p>
+        <ul className="mt-1.5 list-disc space-y-0.5 pl-4">
+          <li>Name: {l.name}</li>
+          <li>Phone: {l.phone}</li>
+          {l.email && <li>Email: {l.email}</li>}
+        </ul>
+        <p className="mt-2">Want me to send this to the team?</p>
+      </>
+    );
+  }
+
+  async function submitLeadFromChat() {
+    const l = leadRef.current;
+    setLead((prev) => ({ ...prev, step: "submitting" }));
+    pushBotReply(<>Sending this over now…</>, "Submitting lead");
+    try {
+      await submitLead({
+        source: "chatbot",
+        name: l.name ?? "",
+        phone: l.phone,
+        email: l.email,
+        urgent: ctx.urgent,
+        fields: [{ label: "Topics discussed", value: ctx.topicsDiscussed.map(topicLabel).join(", ") || "General chat" }],
+        transcript: transcriptRef.current,
+      });
+      setLead({ step: "done" });
+      setCtx((c) => ({ ...c, leadSubmitted: true }));
+      pushBotReply(
+        <>
+          <p className="flex items-center gap-1.5 font-semibold text-primary">
+            <CircleCheck className="h-4 w-4" /> Sent! A real person will reach out shortly.
+          </p>
+          <p className="mt-1 text-muted-foreground">Anything else I can help with while you wait?</p>
+        </>,
+        "Lead submitted successfully"
+      );
+    } catch {
+      setLead((prev) => ({ ...prev, step: "error" }));
+      pushBotReply(
+        <>
+          I couldn&apos;t send that automatically. Please call us at{" "}
+          <a href={siteConfig.phoneHref} className="font-semibold text-primary link-underline">
+            {siteConfig.phone}
+          </a>{" "}
+          instead, we&apos;d rather hear from you than lose the message.
+        </>,
+        "Lead submission failed"
+      );
+    }
+  }
+
+  function handleLeadStep(text: string) {
+    const t = text.trim();
+    const step = leadRef.current.step;
+
+    if (step === "offer") {
+      if (/^(yes|yep|yeah|sure|let'?s do it|ok|okay|sounds good)/i.test(t)) {
+        setLead({ step: "name" });
+        pushBotReply(<>Great, what&apos;s your name?</>, "Asked for name");
+      } else if (/^(no|nope|not now|no thanks|not really)/i.test(t)) {
+        setCtx((c) => ({ ...c, leadDeclined: true }));
+        setLead({ step: "idle" });
+        pushBotReply(
+          <>No problem, happy to keep answering questions. Call {siteConfig.phone} any time.</>,
+          "Declined lead capture"
+        );
+      } else {
+        pushBotReply(<>Just a yes or no works, want me to grab your info?</>, "Reprompted for offer response");
+      }
+      return;
+    }
+
+    if (step === "name") {
+      if (!isValidName(t)) {
+        pushBotReply(<>I didn&apos;t quite catch a name there, mind typing it again?</>, "Asked again for name");
+        return;
+      }
+      const firstName = t.split(" ")[0];
+      if (leadRef.current.phone) {
+        setLead((prev) => ({ ...prev, name: t, step: "confirm" }));
+        pushBotReply(confirmReply({ ...leadRef.current, name: t }), "Recapped lead details for confirmation");
+      } else {
+        setLead((prev) => ({ ...prev, name: t, step: "phone" }));
+        pushBotReply(<>Thanks, {firstName}. What&apos;s the best phone number to reach you?</>, "Asked for phone");
+      }
+      return;
+    }
+
+    if (step === "phone") {
+      if (!isValidPhone(t)) {
+        pushBotReply(<>That doesn&apos;t look like a full phone number, mind trying again?</>, "Asked again for phone");
+        return;
+      }
+      if (leadRef.current.email) {
+        setLead((prev) => ({ ...prev, phone: t, step: "confirm" }));
+        pushBotReply(confirmReply({ ...leadRef.current, phone: t }), "Recapped lead details for confirmation");
+      } else {
+        setLead((prev) => ({ ...prev, phone: t, step: "email" }));
+        pushBotReply(<>Got it. Email too? Optional, type &quot;skip&quot; to move on.</>, "Asked for email");
+      }
+      return;
+    }
+
+    if (step === "email") {
+      if (/^skip$/i.test(t)) {
+        setLead((prev) => ({ ...prev, step: "confirm" }));
+        pushBotReply(confirmReply(leadRef.current), "Recapped lead details for confirmation");
+        return;
+      }
+      if (!isValidEmail(t)) {
+        pushBotReply(<>That email doesn&apos;t look quite right, try again or type &quot;skip&quot;.</>, "Asked again for email");
+        return;
+      }
+      setLead((prev) => ({ ...prev, email: t, step: "confirm" }));
+      pushBotReply(confirmReply({ ...leadRef.current, email: t }), "Recapped lead details for confirmation");
+      return;
+    }
+
+    if (step === "confirm") {
+      if (/^(yes|yep|yeah|send|confirm|correct|sure)/i.test(t)) {
+        submitLeadFromChat();
+      } else if (/^(no|nope|start over|redo|restart)/i.test(t)) {
+        setLead({ step: "name" });
+        pushBotReply(<>No problem, let&apos;s start over. What&apos;s your name?</>, "Restarted lead capture");
+      } else {
+        pushBotReply(<>Just need a yes to send this along, or say &quot;start over&quot;.</>, "Reprompted for confirmation");
+      }
+    }
+  }
+
+  function cancelLeadCapture() {
+    pushUserMessage("Cancel");
+    setCtx((c) => ({ ...c, leadDeclined: true }));
+    setLead({ step: "idle" });
+    pushBotReply(<>No worries, cancelled. What else can I help with?</>, "Cancelled lead capture");
+  }
+
+  function handleUserInput(displayText: string, matchText: string = displayText) {
+    pushUserMessage(displayText);
+
+    const step = leadRef.current.step;
+    if (step !== "idle" && step !== "done" && step !== "error") {
+      handleLeadStep(matchText);
+      return;
+    }
+
+    const detected = detectContactInfo(matchText);
+    if ((detected.phone || detected.email) && !ctx.leadOffered && !ctx.leadDeclined && !ctx.leadSubmitted) {
+      startLeadCapture(detected, true);
+      return;
+    }
+
+    const result = getSmartReply(matchText, ctx);
+    setCtx(result.nextContext);
+    pushBotReply(result.content, result.logLabel, () => {
+      if (result.offerLeadCapture) {
+        setTimeout(offerLeadCapture, 500);
+      }
+    });
+  }
+
   function handleQuickAction(qa: QuickAction) {
-    setMessages((m) => [...m, { id: nextId(), from: "user", content: qa.label }]);
-    pushBotReply(qa.reply());
+    handleUserInput(qa.label, qa.triggerText);
   }
 
   function handleSend() {
     const text = input.trim();
     if (!text) return;
-    setMessages((m) => [...m, { id: nextId(), from: "user", content: text }]);
     setInput("");
-    const matched = matchKeywordReply(text);
-    pushBotReply(
-      matched ?? (
-        <>
-          I&apos;m a simple assistant, best for pointing you to the right page or number. For anything specific to
-          your job, call us at{" "}
-          <a href={siteConfig.phoneHref} className="font-semibold text-primary link-underline">
-            {siteConfig.phone}
-          </a>{" "}
-          or tap a quick action below.
-        </>
-      )
-    );
+    handleUserInput(text);
   }
+
+  const capturing = lead.step !== "idle" && lead.step !== "done" && lead.step !== "error";
+  const placeholder =
+    lead.step === "name"
+      ? "Your name…"
+      : lead.step === "phone"
+        ? "Your phone number…"
+        : lead.step === "email"
+          ? "Your email (or type skip)…"
+          : lead.step === "offer" || lead.step === "confirm"
+            ? "Yes or no…"
+            : "Type a question…";
 
   return (
     <div className="fixed bottom-[104px] right-4 z-50 lg:bottom-6 lg:right-6">
@@ -289,7 +411,12 @@ export function ChatWidget() {
                     )}
                   </span>
                   <div>
-                    <div className="text-sm font-semibold text-white">Gary&apos;s Pipelining</div>
+                    <div className="flex items-center gap-1.5 text-sm font-semibold text-white">
+                      Gary&apos;s Pipelining
+                      <span className="inline-flex items-center gap-0.5 rounded-full bg-white/15 px-1.5 py-0.5 text-[10px] font-medium text-white/90">
+                        <Sparkles className="h-2.5 w-2.5" /> Smart assistant
+                      </span>
+                    </div>
                     <div className="flex items-center gap-1.5 text-xs text-white/70">
                       <span className="relative flex h-1.5 w-1.5">
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -349,20 +476,27 @@ export function ChatWidget() {
               {typing && <TypingIndicator />}
             </div>
 
-            {/* Quick actions bar */}
+            {/* Quick actions / lead-capture actions bar */}
             <div className="shrink-0 border-t border-border bg-surface/60 px-3 py-2.5">
-              <div className="grid grid-cols-3 gap-1.5">
-                {quickActions.map((qa) => (
-                  <button
-                    key={qa.key}
-                    type="button"
-                    onClick={() => handleQuickAction(qa)}
-                    className="rounded-xl border border-border-strong bg-surface-elevated px-2 py-2 text-center text-xs font-medium leading-tight text-foreground transition-colors hover:border-primary hover:text-primary"
-                  >
-                    {qa.shortLabel}
-                  </button>
-                ))}
-              </div>
+              {lead.step === "offer" ? (
+                <div className="grid grid-cols-2 gap-1.5">
+                  <ActionButton label="Yes, let's do it" onClick={() => handleUserInput("Yes, let's do it")} />
+                  <ActionButton label="No thanks" onClick={() => handleUserInput("No thanks")} />
+                </div>
+              ) : lead.step === "confirm" ? (
+                <div className="grid grid-cols-2 gap-1.5">
+                  <ActionButton label="Yes, send it" onClick={() => handleUserInput("Yes, send it")} />
+                  <ActionButton label="Start over" onClick={() => handleUserInput("Start over")} />
+                </div>
+              ) : lead.step === "name" || lead.step === "phone" || lead.step === "email" || lead.step === "submitting" ? (
+                <ActionButton label="Cancel" onClick={cancelLeadCapture} disabled={lead.step === "submitting"} />
+              ) : (
+                <div className="grid grid-cols-3 gap-1.5">
+                  {DEFAULT_QUICK_ACTIONS.map((qa) => (
+                    <ActionButton key={qa.key} label={qa.shortLabel} onClick={() => handleQuickAction(qa)} />
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Input */}
@@ -377,20 +511,21 @@ export function ChatWidget() {
                 ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Type a question..."
-                className="flex-1 rounded-full border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                placeholder={placeholder}
+                disabled={lead.step === "submitting"}
+                className="flex-1 rounded-full border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-60"
               />
               <button
                 type="submit"
                 aria-label="Send message"
-                disabled={!input.trim()}
+                disabled={!input.trim() || lead.step === "submitting"}
                 className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground transition-transform active:scale-95 disabled:opacity-40"
               >
                 <Send className="h-4 w-4" />
               </button>
             </form>
             <p className="shrink-0 px-4 pb-3 text-center text-[11px] text-muted-foreground">
-              Automated assistant. For anything urgent, call {siteConfig.phone}.
+              {capturing ? "Your info goes straight to our team." : `Automated assistant. For anything urgent, call ${siteConfig.phone}.`}
             </p>
           </motion.div>
         )}

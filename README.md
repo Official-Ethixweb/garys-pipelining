@@ -15,7 +15,7 @@ estimate form that emails leads directly to the client.
 - React 19
 - Tailwind CSS v4
 - TypeScript
-- Web3Forms (contact/estimate form email delivery)
+- Nodemailer + SMTP2Go (lead email delivery, via `/api/send-lead`)
 - Vercel (hosting/deploy)
 
 ## How to set it up locally
@@ -38,9 +38,32 @@ estimate form that emails leads directly to the client.
 
 ## Environment variables needed
 
-- `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY`, Web3Forms access key used by the
-  contact/estimate form. Without it the form still validates client-side but
-  submissions are rejected and visitors see a "please call instead" fallback.
+Every lead source on the site, the estimate form, the contractor
+partnership form, and the chatbot, POSTs to a single route handler,
+`src/app/api/send-lead/route.ts`, which sends mail over SMTP via
+[Nodemailer](https://nodemailer.com). See `src/lib/mail/` for the reusable
+pieces (transport, templates, branding). Without SMTP configured, forms
+still validate client-side but submissions fail server-side and visitors
+see a "please call instead" fallback.
+
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, credentials for an
+  SMTP2Go SMTP user (Settings > SMTP Users in the SMTP2Go dashboard). Any
+  standard SMTP relay works here, not just SMTP2Go.
+- `SMTP_SECURE`, optional, `"true"` to force implicit TLS. Inferred from
+  the port (465 = true) if unset.
+- `MAIL_FROM`, the sending address. Its domain must be a verified sender in
+  SMTP2Go.
+- `MAIL_TO`, the admin inbox that receives lead notifications. Accepts a
+  comma-separated list for multiple recipients.
+- `MAIL_BRAND_*` (optional), overrides the name/logo/colors used in outgoing
+  emails. Defaults to `site-config.ts`, which is correct for this project;
+  only needed if this mail system is reused on a different project without
+  also swapping `site-config.ts`.
+
+See `.env.local.example` for the full list with SMTP2Go-specific notes.
+
+- `GOOGLE_SITE_VERIFICATION` (optional), the Google Search Console HTML tag
+  verification code. Only needed once, in Vercel's Production env vars.
 
 Never commit `.env*` files, they are already excluded via `.gitignore`.
 
@@ -49,8 +72,33 @@ Never commit `.env*` files, they are already excluded via `.gitignore`.
 - Deploys to Vercel. `npm run build` then `npm start` locally reproduces the
   production build; on Vercel this runs automatically on push via its Next.js
   adapter.
-- The Web3Forms access key must be set as an environment variable in the
-  Vercel project settings, it is not committed to the repo.
+- The SMTP credentials above must be set as environment variables in the
+  Vercel project settings, they are not committed to the repo.
+
+## SEO
+
+- `src/lib/site-config.ts` is the single source of truth for the canonical
+  URL (`https://www.garyspipelining.com`), used by metadata, the sitemap,
+  robots.txt, and JSON-LD. Update it there if the domain ever changes.
+- `src/app/sitemap.ts` / `robots.ts` are generated from `services.ts` /
+  `locations.ts`, new service or location pages are picked up automatically.
+- `src/app/manifest.ts` is the web app manifest (name, icons, theme color).
+- `src/app/llms.txt/route.ts` serves a plain-text summary of the business,
+  services, and service areas for AI assistants/answer engines, generated
+  from the same content the site renders from.
+- Preview and branch deployments are automatically kept out of search
+  results: `robots.ts` and the root `robots` metadata check
+  `VERCEL_ENV`/`NODE_ENV` (via `isProduction` in `site-config.ts`) and
+  return `noindex`/`Disallow: /` on anything that isn't the production
+  deployment. Only `https://www.garyspipelining.com` itself is indexable.
+- Every page sets its own `title`/`description`/canonical in its
+  `metadata` export (or `generateMetadata` for the `/services/[slug]` and
+  `/service-area/[slug]` dynamic routes); structured data (`LocalBusiness`,
+  `Service`, `BreadcrumbList`, `FAQPage`) lives in `src/lib/schema.ts` and is
+  injected per-page via `<JsonLd />`.
+- To verify the domain in Google Search Console, add the HTML tag's
+  `content` value as `GOOGLE_SITE_VERIFICATION` in Vercel (see above), no
+  code change needed.
 
 ## Key contacts
 

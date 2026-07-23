@@ -10,7 +10,7 @@ import { NavigationProgress } from "@/components/layout/navigation-progress";
 import { MotionPreferenceProvider } from "@/components/layout/motion-preference-provider";
 import { ChatWidget } from "@/components/chat/chat-widget-lazy";
 import { AccessibilityWidget } from "@/components/accessibility/accessibility-widget";
-import { siteConfig } from "@/lib/site-config";
+import { siteConfig, isProduction } from "@/lib/site-config";
 
 const sourceSans = Source_Sans_3({
   variable: "--font-source-sans",
@@ -39,6 +39,17 @@ export const metadata: Metadata = {
     description: siteConfig.description,
   },
   alternates: { canonical: "/" },
+  // Preview/branch deployments share this same metadata, keep them out of
+  // search results; robots.ts handles the /robots.txt side of the same rule.
+  robots: isProduction
+    ? { index: true, follow: true }
+    : { index: false, follow: false },
+  verification: {
+    // Paste the content value of the "google-site-verification" meta tag
+    // Google Search Console gives you when adding this property, as
+    // GOOGLE_SITE_VERIFICATION in the Vercel project's environment variables.
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+  },
 };
 
 export const viewport = {

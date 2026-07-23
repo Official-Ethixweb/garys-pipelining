@@ -5,7 +5,8 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowRight, CircleCheck, Upload, X } from "lucide-react";
-import { submitPartnershipForm } from "@/lib/web3forms";
+import { submitLead } from "@/lib/send-lead";
+import { ALLOWED_ATTACHMENT_EXTENSIONS, MAX_ATTACHMENT_SIZE_BYTES, validateAttachment } from "@/lib/mail/attachment";
 
 const industries = [
   "General Contractor",
@@ -34,9 +35,6 @@ const projectTypeOptions = [
 
 const annualProjectRanges = ["1–5", "6–20", "21–50", "50+"];
 const contactMethods = ["Phone", "Email", "Text"];
-
-const ALLOWED_FILE_EXTENSIONS = [".pdf", ".jpg", ".jpeg", ".png", ".dwg"];
-const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 
 const schema = z.object({
   companyName: z.string().min(2, "Enter your company name"),
@@ -83,15 +81,9 @@ export function PartnershipForm() {
       setFileError(null);
       return;
     }
-    const extension = selected.name.slice(selected.name.lastIndexOf(".")).toLowerCase();
-    if (!ALLOWED_FILE_EXTENSIONS.includes(extension)) {
-      setFileError(`That file type isn't supported. Please upload one of: ${ALLOWED_FILE_EXTENSIONS.join(", ")}.`);
-      setFile(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      return;
-    }
-    if (selected.size > MAX_FILE_SIZE_BYTES) {
-      setFileError("That file is too large. Please upload something under 10 MB.");
+    const check = validateAttachment(selected.name, selected.size);
+    if (!check.ok) {
+      setFileError(check.message);
       setFile(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
@@ -110,7 +102,25 @@ export function PartnershipForm() {
   async function onSubmit(values: FormValues) {
     setError(null);
     try {
-      await submitPartnershipForm({ ...values, projectTypes: values.projectTypes?.join(", ") }, file);
+      await submitLead(
+        {
+          source: "partnership",
+          name: values.contactPerson,
+          email: values.email,
+          phone: values.phone,
+          botcheck: values.botcheck,
+          fields: [
+            { label: "Company name", value: values.companyName },
+            { label: "Company website", value: values.companyWebsite ?? "" },
+            { label: "Industry", value: values.industry },
+            { label: "Project types", value: values.projectTypes?.join(", ") ?? "" },
+            { label: "Estimated annual projects", value: values.estimatedAnnualProjects ?? "" },
+            { label: "Preferred contact method", value: values.preferredContactMethod },
+            { label: "Message", value: values.message ?? "" },
+          ],
+        },
+        file
+      );
     } catch {
       setError("We couldn't send your request automatically. Please call us instead, we'd rather hear from you than lose the message.");
     }
@@ -305,7 +315,7 @@ export function PartnershipForm() {
           ref={fileInputRef}
           id={`${industryGroupId}-file`}
           type="file"
-          accept={ALLOWED_FILE_EXTENSIONS.join(",")}
+          accept={ALLOWED_ATTACHMENT_EXTENSIONS.join(",")}
           className="sr-only"
           onChange={(e) => handleFileChange(e.target.files?.[0] ?? null)}
         />
@@ -335,7 +345,9 @@ export function PartnershipForm() {
           </button>
         )}
         {fileError && <p className="mt-1.5 text-xs text-emergency">{fileError}</p>}
-        <p className="mt-1.5 text-xs text-muted-foreground">PDF, JPG, PNG, or DWG, up to 10 MB.</p>
+        <p className="mt-1.5 text-xs text-muted-foreground">
+          PDF, JPG, PNG, or DWG, up to {MAX_ATTACHMENT_SIZE_BYTES / (1024 * 1024)} MB.
+        </p>
       </div>
 
       {error && <p className="text-sm text-emergency">{error}</p>}
