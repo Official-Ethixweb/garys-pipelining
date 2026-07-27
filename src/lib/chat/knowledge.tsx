@@ -53,10 +53,17 @@ const SERVICE_SYNONYMS: Record<string, string[]> = {
   "sump-pump-installation": ["sump", "flooding", "flooded", "basement", "groundwater", "crawl space"],
 };
 
+// Words that recur across several service slugs ("pipe", "sewer", "repair"...)
+// are too generic to count as a real single-token signal, "pipe" alone
+// shouldn't be able to out-vote a specific synonym like "roots" on a tied
+// score. Full multi-word matches (the service name, phrase synonyms) are
+// unaffected, this only trims the noisy single-word half of the keyword set.
+const GENERIC_DOMAIN_WORDS = new Set(["pipe", "pipes", "sewer", "drain", "drains", "line", "lines", "water", "repair", "service", "services", "replacement"]);
+
 function serviceKeywords(service: Service): string[] {
   return [
     service.name.toLowerCase(),
-    ...service.slug.split("-"),
+    ...service.slug.split("-").filter((w) => !GENERIC_DOMAIN_WORDS.has(w)),
     service.category.toLowerCase(),
     ...(SERVICE_SYNONYMS[service.slug] ?? []),
   ];

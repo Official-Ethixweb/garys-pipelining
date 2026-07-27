@@ -38,11 +38,14 @@ function emailShell({ preheader, bodyHtml }: { preheader: string; bodyHtml: stri
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                   <tr>
                     <td valign="middle">
-                      <img src="${escapeHtml(mailBrand.logoUrl)}" alt="${escapeHtml(mailBrand.companyName)}" height="32" style="height:32px; display:block;" />
+                      <img src="${escapeHtml(mailBrand.logoSrc)}" alt="${escapeHtml(mailBrand.companyName)}" height="72" style="height:72px; display:block;" />
                     </td>
                   </tr>
                 </table>
               </td>
+            </tr>
+            <tr>
+              <td height="4" style="background-color:${mailBrand.accentColor}; line-height:4px; font-size:1px;">&nbsp;</td>
             </tr>
             <tr>
               <td class="px" style="padding:32px;">
@@ -125,7 +128,7 @@ export function renderAdminLeadEmail(lead: NormalizedLead): RenderedEmail {
       ${pill(lead.sourceLabel, mailBrand.primaryColor)}
       ${lead.urgent ? ` ${pill("Urgent", "#dc2626")}` : ""}
     </div>
-    <h1 style="margin:0 0 4px; font-size:20px; color:#0f172a;">New lead: ${escapeHtml(lead.name)}</h1>
+    <h1 style="margin:0 0 4px; font-size:20px; color:#0f172a;"><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background-color:${mailBrand.accentColor}; margin-right:8px;">&nbsp;</span>New lead: ${escapeHtml(lead.name)}</h1>
     <p style="margin:0 0 20px; font-size:13px; color:#64748b;">Submitted ${escapeHtml(formatTimestamp(lead.submittedAt))}${
       lead.pageUrl ? ` from <span style="word-break:break-all;">${escapeHtml(lead.pageUrl)}</span>` : ""
     }</p>
@@ -198,7 +201,7 @@ export function renderCustomerConfirmationEmail(lead: NormalizedLead): RenderedE
     <p style="margin:0 0 20px; font-size:15px; line-height:1.6; color:#334155;">Hi ${escapeHtml(firstName)}, ${escapeHtml(copy.body)}</p>
     ${fieldsTable(recapFields)}
     <div style="margin-top:28px;">
-      <a href="${escapeHtml(mailBrand.phoneHref)}" style="display:inline-block; padding:12px 22px; border-radius:999px; background-color:${mailBrand.primaryColor}; color:#ffffff; font-size:14px; font-weight:600; text-decoration:none;">Call ${escapeHtml(mailBrand.phone)}</a>
+      <a href="${escapeHtml(mailBrand.phoneHref)}" style="display:inline-block; padding:11px 21px; border-radius:999px; border:2px solid ${mailBrand.accentColor}; background-color:${mailBrand.primaryColor}; color:#ffffff; font-size:14px; font-weight:600; text-decoration:none;">Call ${escapeHtml(mailBrand.phone)}</a>
     </div>
   `;
 

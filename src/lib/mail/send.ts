@@ -1,7 +1,16 @@
-import { mailBrand } from "./brand";
+import { LOGO_CID, mailBrand } from "./brand";
+import { LOGO_EMAIL_PNG_BASE64 } from "./logo-asset";
 import { renderAdminLeadEmail, renderCustomerConfirmationEmail } from "./templates";
 import { getTransporter, isMailConfigured } from "./transport";
 import type { NormalizedLead } from "./types";
+
+type MailAttachment = { filename: string; content: Buffer; contentType: string; cid?: string };
+
+/** The logo ships as a base64 JS constant (see logo-asset.ts), not a runtime fs read: Vercel's serverless functions don't reliably expose public/ on disk to route handlers. */
+function getLogoAttachment(): MailAttachment | null {
+  if (mailBrand.logoSrc !== `cid:${LOGO_CID}`) return null; // a remote MAIL_BRAND_LOGO_URL is in use instead
+  return { filename: "logo.png", content: Buffer.from(LOGO_EMAIL_PNG_BASE64, "base64"), contentType: "image/png", cid: LOGO_CID };
+}
 
 export class MailNotConfiguredError extends Error {
   constructor() {
@@ -40,6 +49,7 @@ export async function sendLeadEmails(lead: NormalizedLead): Promise<SendLeadEmai
 
   const transporter = getTransporter();
   const from = resolveFromAddress();
+  const logoAttachment = getLogoAttachment();
 
   const admin = renderAdminLeadEmail(lead);
   await transporter.sendMail({
@@ -49,9 +59,12 @@ export async function sendLeadEmails(lead: NormalizedLead): Promise<SendLeadEmai
     subject: admin.subject,
     html: admin.html,
     text: admin.text,
-    attachments: lead.attachment
-      ? [{ filename: lead.attachment.filename, content: lead.attachment.content, contentType: lead.attachment.contentType }]
-      : undefined,
+    attachments: [
+      ...(logoAttachment ? [logoAttachment] : []),
+      ...(lead.attachment
+        ? [{ filename: lead.attachment.filename, content: lead.attachment.content, contentType: lead.attachment.contentType }]
+        : []),
+    ],
   });
 
   let customerSent = false;
@@ -65,6 +78,7 @@ export async function sendLeadEmails(lead: NormalizedLead): Promise<SendLeadEmai
         subject: customer.subject,
         html: customer.html,
         text: customer.text,
+        attachments: logoAttachment ? [logoAttachment] : undefined,
       });
       customerSent = true;
     } catch (err) {
