@@ -12,6 +12,10 @@ import { checkRateLimit } from "@/lib/rate-limit";
 // SMTP, so validation, sanitization, spam filtering, and rate limiting only
 // ever need to be written once.
 export const runtime = "nodejs";
+// Two sequential SMTP sends (admin, then customer) against the timeouts set
+// in transport.ts can take up to ~25s in the worst case; this keeps Vercel
+// from killing the function before that resolves. Within Hobby plan limits.
+export const maxDuration = 30;
 
 function jsonError(message: string, status: number, extraHeaders?: HeadersInit) {
   return NextResponse.json({ success: false, message }, { status, headers: extraHeaders });

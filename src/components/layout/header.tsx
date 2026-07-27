@@ -153,6 +153,8 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [showBadge, setShowBadge] = useState(true);
   const [hoveredHref, setHoveredHref] = useState<string | null>(null);
+  const mobileToggleRef = useRef<HTMLButtonElement>(null);
+  const mobilePanelRef = useRef<HTMLDivElement>(null);
 
   const currentHref = hoveredHref;
   const pillGlow = NAV_GLOW_HOVER;
@@ -168,6 +170,29 @@ export function Header() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Mobile menu dismissal: the desktop NavDropdown handles Escape/outside-click
+  // itself, but this panel is a separate piece of state that never got the
+  // same treatment, so it could only be closed by tapping a link or the
+  // toggle button again.
+  useEffect(() => {
+    if (!open) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    function onClickOutside(e: MouseEvent) {
+      const target = e.target as Node;
+      if (mobilePanelRef.current?.contains(target)) return;
+      if (mobileToggleRef.current?.contains(target)) return;
+      setOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onClickOutside);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onClickOutside);
+    };
+  }, [open]);
 
   return (
     <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "pb-3" : "pb-4"}`}>
@@ -267,6 +292,7 @@ export function Header() {
               <span>{siteConfig.phone}</span>
             </motion.a>
             <button
+              ref={mobileToggleRef}
               type="button"
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
@@ -290,6 +316,7 @@ export function Header() {
         <AnimatePresence>
           {open && (
             <motion.div
+              ref={mobilePanelRef}
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}

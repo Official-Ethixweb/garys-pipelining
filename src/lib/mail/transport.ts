@@ -57,6 +57,15 @@ export function getTransporter(): nodemailer.Transporter {
     port: config.port,
     secure: config.secure,
     auth: { user: config.user, pass: config.pass },
+    // Nodemailer's own defaults (2min connection timeout) outlast Vercel's
+    // function execution limit, so a hung SMTP connection would get killed by
+    // the platform before this try/catch ever ran, surfacing a raw platform
+    // timeout instead of the graceful "call us instead" response. These keep
+    // every phase well under route.ts's maxDuration, even for two sequential
+    // sends (admin + customer).
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 15_000,
   });
   cachedConfigKey = configKey;
   return cachedTransporter;
