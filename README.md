@@ -55,6 +55,8 @@ see a "please call instead" fallback.
   SMTP2Go.
 - `MAIL_TO`, the admin inbox that receives lead notifications. Accepts a
   comma-separated list for multiple recipients.
+- `MAIL_BCC` (optional), comma-separated list of addresses silently BCC'd on
+  every admin lead notification, without appearing in the To: list.
 - `MAIL_BRAND_*` (optional), overrides the name/logo/colors used in outgoing
   emails. Defaults to `site-config.ts`, which is correct for this project;
   only needed if this mail system is reused on a different project without

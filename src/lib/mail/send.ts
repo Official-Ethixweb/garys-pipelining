@@ -46,6 +46,7 @@ export async function sendLeadEmails(lead: NormalizedLead): Promise<SendLeadEmai
   if (!mailTo) {
     throw new MailNotConfiguredError();
   }
+  const mailBcc = process.env.MAIL_BCC;
 
   const transporter = getTransporter();
   const from = resolveFromAddress();
@@ -55,6 +56,7 @@ export async function sendLeadEmails(lead: NormalizedLead): Promise<SendLeadEmai
   await transporter.sendMail({
     from,
     to: mailTo,
+    bcc: mailBcc || undefined,
     replyTo: lead.email || undefined,
     subject: admin.subject,
     html: admin.html,

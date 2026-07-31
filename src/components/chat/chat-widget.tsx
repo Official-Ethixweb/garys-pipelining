@@ -612,12 +612,10 @@ export function ChatWidget() {
                   </span>
                 )}
               </span>
-              {unread > 0 ? (
+              {unread > 0 && (
                 <span className="absolute -right-1 -top-1 z-20 grid h-4 w-4 place-items-center rounded-full border-2 border-background bg-emergency text-[9px] font-bold text-white lg:-right-1.5 lg:-top-1.5 lg:h-6 lg:w-6 lg:text-[11px]">
                   {unread}
                 </span>
-              ) : (
-                <span className="absolute -right-0.5 -top-0.5 z-20 h-3 w-3 rounded-full border-2 border-background bg-yellow lg:-right-1 lg:-top-1 lg:h-[18px] lg:w-[18px]" />
               )}
             </motion.button>
           )}
