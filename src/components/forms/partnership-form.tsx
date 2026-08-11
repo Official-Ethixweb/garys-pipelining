@@ -5,8 +5,13 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ArrowRight, CircleCheck, Upload, X } from "lucide-react";
+import { Turnstile } from "@/components/ui/turnstile";
 import { submitLead } from "@/lib/send-lead";
 import { ALLOWED_ATTACHMENT_EXTENSIONS, MAX_ATTACHMENT_SIZE_BYTES, validateAttachment } from "@/lib/mail/attachment";
+
+// Only require a Turnstile token when a site key is actually configured, so
+// local/dev environments without a provisioned widget aren't blocked.
+const turnstileRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
 
 const industries = [
   "General Contractor",
@@ -56,6 +61,7 @@ export function PartnershipForm() {
   const [error, setError] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
     register,
@@ -109,6 +115,7 @@ export function PartnershipForm() {
           email: values.email,
           phone: values.phone,
           botcheck: values.botcheck,
+          turnstileToken,
           fields: [
             { label: "Company name", value: values.companyName },
             { label: "Company website", value: values.companyWebsite ?? "" },
@@ -122,6 +129,8 @@ export function PartnershipForm() {
         file
       );
     } catch {
+      // Tokens are single-use; clear it so the widget can be reset/retried.
+      setTurnstileToken(null);
       setError("We couldn't send your request automatically. Please call us instead, we'd rather hear from you than lose the message.");
     }
   }
@@ -352,7 +361,13 @@ export function PartnershipForm() {
 
       {error && <p className="text-sm text-emergency">{error}</p>}
 
-      <button type="submit" disabled={isSubmitting} className="btn-primary mt-2 w-full justify-center text-base disabled:opacity-60 sm:w-fit">
+      <Turnstile onVerify={setTurnstileToken} onExpire={() => setTurnstileToken(null)} />
+
+      <button
+        type="submit"
+        disabled={isSubmitting || (turnstileRequired && !turnstileToken)}
+        className="btn-primary mt-2 w-full justify-center text-base disabled:opacity-60 sm:w-fit"
+      >
         {isSubmitting ? "Sending…" : "Submit partnership request"}
         {!isSubmitting && <ArrowRight className="h-4 w-4" />}
       </button>

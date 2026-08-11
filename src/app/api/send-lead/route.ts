@@ -5,7 +5,8 @@ import { sanitizeHeaderValue } from "@/lib/mail/sanitize";
 import { MailNotConfiguredError, sendLeadEmails } from "@/lib/mail/send";
 import { looksLikeSpam } from "@/lib/mail/spam";
 import type { LeadAttachment, NormalizedLead } from "@/lib/mail/types";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 // Every lead source on the site (Estimate, Contact, Contractor Partnership,
 // Careers, and the chatbot) POSTs here. This is the only place that talks to
@@ -19,12 +20,6 @@ export const maxDuration = 30;
 
 function jsonError(message: string, status: number, extraHeaders?: HeadersInit) {
   return NextResponse.json({ success: false, message }, { status, headers: extraHeaders });
-}
-
-function getClientIp(request: NextRequest): string {
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  if (forwardedFor) return forwardedFor.split(",")[0].trim();
-  return request.headers.get("x-real-ip")?.trim() || "unknown";
 }
 
 export async function POST(request: NextRequest) {
@@ -81,6 +76,30 @@ export async function POST(request: NextRequest) {
   if (looksLikeSpam(data)) {
     console.warn(`[send-lead] Dropped a submission from ${ip} that matched spam heuristics.`);
     return NextResponse.json({ success: true });
+  }
+
+  // Turnstile is an additional layer on top of the honeypot/rate-limit/spam
+  // checks above, not a replacement for any of them. `turnstileToken` isn't
+  // part of leadPayloadSchema (that schema is shared by every lead source),
+  // so it's read directly off the raw, not-yet-validated body.
+  //
+  // The chatbot is exempt: it's a multi-turn conversational flow with no
+  // natural place for a checkbox widget, and it's already covered by the
+  // honeypot/rate-limit/spam checks above. Every form-based source (estimate,
+  // partnership, and any future contact/careers form) still requires a
+  // verified token.
+  if (data.source !== "chatbot") {
+    const turnstileToken =
+      typeof rawBody === "object" && rawBody !== null && "turnstileToken" in rawBody
+        ? (rawBody as { turnstileToken?: unknown }).turnstileToken
+        : undefined;
+    const turnstile = await verifyTurnstile(turnstileToken, request);
+    if (!turnstile.ok) {
+      if (turnstile.reason === "not_configured") {
+        return jsonError("Submissions are temporarily unavailable. Please try again later.", 503);
+      }
+      return jsonError("Verification failed. Please try again.", 403);
+    }
   }
 
   const normalized: NormalizedLead = {

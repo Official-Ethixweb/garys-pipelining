@@ -7,8 +7,13 @@ import { z } from "zod";
 import { ArrowRight, CircleCheck, MoreHorizontal } from "lucide-react";
 import { services } from "@/lib/content/services";
 import { ServiceIcon } from "@/components/ui/service-icon";
+import { Turnstile } from "@/components/ui/turnstile";
 import { submitLead } from "@/lib/send-lead";
 import { siteConfig } from "@/lib/site-config";
+
+// Only require a Turnstile token when a site key is actually configured, so
+// local/dev environments without a provisioned widget aren't blocked.
+const turnstileRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
 
 const schema = z.object({
   name: z.string().min(2, "Enter your full name"),
@@ -27,6 +32,7 @@ type FormValues = z.infer<typeof schema>;
 export function EstimateForm({ defaultService }: { defaultService?: string }) {
   const [error, setError] = useState<string | null>(null);
   const [showOtherInput, setShowOtherInput] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -52,6 +58,7 @@ export function EstimateForm({ defaultService }: { defaultService?: string }) {
         phone: values.phone,
         email: values.email || undefined,
         botcheck: values.botcheck,
+        turnstileToken,
         fields: [
           { label: "Address", value: values.address ?? "" },
           { label: "Service needed", value: values.service ?? "" },
@@ -61,6 +68,8 @@ export function EstimateForm({ defaultService }: { defaultService?: string }) {
         ],
       });
     } catch {
+      // Tokens are single-use; clear it so the widget can be reset/retried.
+      setTurnstileToken(null);
       setError("We couldn't send your request automatically. Please call us instead, we'd rather hear from you than lose the message.");
     }
   }
@@ -214,7 +223,13 @@ export function EstimateForm({ defaultService }: { defaultService?: string }) {
 
       {error && <p className="text-sm text-emergency">{error}</p>}
 
-      <button type="submit" disabled={isSubmitting} className="btn-primary mt-2 w-full justify-center text-base disabled:opacity-60 sm:w-fit">
+      <Turnstile onVerify={setTurnstileToken} onExpire={() => setTurnstileToken(null)} />
+
+      <button
+        type="submit"
+        disabled={isSubmitting || (turnstileRequired && !turnstileToken)}
+        className="btn-primary mt-2 w-full justify-center text-base disabled:opacity-60 sm:w-fit"
+      >
         {isSubmitting ? "Sending…" : "Send my request"}
         {!isSubmitting && <ArrowRight className="h-4 w-4" />}
       </button>

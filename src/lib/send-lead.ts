@@ -17,6 +17,8 @@ export type LeadSubmission = {
   pageUrl?: string;
   /** Hidden honeypot checkbox; leave unset/false on real submissions. */
   botcheck?: boolean;
+  /** Cloudflare Turnstile response token, when the widget is configured. */
+  turnstileToken?: string | null;
 };
 
 type SendLeadResponse = { success: boolean; message?: string; customerEmailSent?: boolean };

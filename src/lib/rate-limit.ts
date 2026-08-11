@@ -37,3 +37,11 @@ export function checkRateLimit(key: string, opts?: { windowMs?: number; max?: nu
   bucket.count += 1;
   return { allowed: true };
 }
+
+// Shared client-IP extraction so every caller (rate limiting, Turnstile
+// verification, logging) agrees on the same value instead of re-deriving it.
+export function getClientIp(request: Request): string {
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  if (forwardedFor) return forwardedFor.split(",")[0].trim();
+  return request.headers.get("x-real-ip")?.trim() || "unknown";
+}
