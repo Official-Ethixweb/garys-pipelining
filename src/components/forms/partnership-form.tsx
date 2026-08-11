@@ -361,7 +361,11 @@ export function PartnershipForm() {
 
       {error && <p className="text-sm text-emergency">{error}</p>}
 
-      <Turnstile onVerify={setTurnstileToken} onExpire={() => setTurnstileToken(null)} />
+      <Turnstile
+        onVerify={setTurnstileToken}
+        onExpire={() => setTurnstileToken(null)}
+        onError={() => setError("Verification couldn't load. Please refresh the page or call us instead.")}
+      />
 
       <button
         type="submit"

@@ -48,22 +48,26 @@ function loadTurnstileScript(): Promise<void> {
 export function Turnstile({
   onVerify,
   onExpire,
+  onError,
   theme = "auto",
 }: {
   onVerify: (token: string) => void;
   onExpire?: () => void;
+  onError?: () => void;
   theme?: "light" | "dark" | "auto";
 }) {
   const containerId = `turnstile-${useId().replace(/:/g, "")}`;
   const widgetId = useRef<string | undefined>(undefined);
   const onVerifyRef = useRef(onVerify);
   const onExpireRef = useRef(onExpire);
+  const onErrorRef = useRef(onError);
 
   // Keep the latest callbacks available to the widget without re-rendering
   // it; refs must only be written in an effect, never during render.
   useEffect(() => {
     onVerifyRef.current = onVerify;
     onExpireRef.current = onExpire;
+    onErrorRef.current = onError;
   });
 
   // Next.js only inlines NEXT_PUBLIC_ vars when referenced statically like
@@ -84,10 +88,12 @@ export function Turnstile({
           theme,
           callback: (token) => onVerifyRef.current(token),
           "expired-callback": () => onExpireRef.current?.(),
-          "error-callback": () => onExpireRef.current?.(),
+          "error-callback": () => onErrorRef.current?.(),
         });
       })
-      .catch(() => {});
+      .catch(() => {
+        if (!cancelled) onErrorRef.current?.();
+      });
 
     return () => {
       cancelled = true;
