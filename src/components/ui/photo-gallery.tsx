@@ -58,6 +58,7 @@ export function PhotoGallery({ photos, className = "" }: { photos: GalleryPhoto[
               alt={p.alt}
               fill
               loading="lazy"
+              quality={90}
               sizes="(min-width: 1024px) 25vw, 50vw"
               className="object-cover transition-transform duration-700 group-hover:scale-105"
             />
@@ -134,7 +135,15 @@ export function PhotoGallery({ photos, className = "" }: { photos: GalleryPhoto[
                     className="relative h-[80vh] w-full max-w-4xl"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Image src={photos[openIndex].src} alt={photos[openIndex].alt} fill sizes="90vw" className="object-contain" priority />
+                    <Image
+                      src={photos[openIndex].src}
+                      alt={photos[openIndex].alt}
+                      fill
+                      quality={95}
+                      sizes="90vw"
+                      className="object-contain"
+                      priority
+                    />
                   </motion.div>
                 )}
 

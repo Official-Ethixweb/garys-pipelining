@@ -236,6 +236,7 @@ export default function ContractorPartnershipPage() {
                   alt="Gary's Pipelining crew on a commercial underground utility job"
                   className="object-cover"
                   sizes="(min-width: 1024px) 45vw, 100vw"
+                  quality={90}
                   priority
                 />
                 <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 40%, rgba(13,20,40,0.55) 100%)" }} />
@@ -339,6 +340,7 @@ export default function ContractorPartnershipPage() {
                 alt="Gary's Pipelining crew working a commercial job site"
                 fill
                 loading="lazy"
+                quality={90}
                 sizes="(min-width: 1024px) 40vw, 100vw"
                 className="object-cover"
               />

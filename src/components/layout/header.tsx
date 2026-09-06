@@ -42,6 +42,7 @@ const headerCornerStars = [
 const homeLink = { label: "Home", href: "/" };
 
 const simpleLinks = [
+  { label: "Coupons", href: "/coupons" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
@@ -197,7 +198,7 @@ export function Header() {
   return (
     <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${scrolled ? "pb-3" : "pb-4"}`}>
       <div className="container-px relative mx-auto max-w-[1400px]">
-        <div className="relative grid grid-cols-[auto_1fr_auto] items-center gap-4 px-4 pt-3.5 pb-[4px] transition-all duration-500">
+        <div className="relative grid h-[82px] grid-cols-[96px_1fr_auto] items-center gap-4 px-4 pt-3.5 pb-[4px] transition-all duration-500 sm:h-[98px] sm:grid-cols-[120px_1fr_auto] lg:h-[114px] lg:grid-cols-[144px_1fr_auto]">
           <div
             aria-hidden
             className={`header-glow-fx absolute inset-y-0 left-1/2 right-1/2 w-screen -mx-[50vw] transition-shadow duration-500 ${
@@ -215,7 +216,16 @@ export function Header() {
             ))}
           </div>
 
-          <div onDoubleClick={() => router.push("/")} className="relative z-10 col-start-1 flex translate-x-[24px] scale-[2.389] lg:translate-x-[34px] lg:translate-y-[5px]">
+          {/* Rendered at true final size and positioned absolutely (not scaled up via
+              CSS transform) so WebKit/Safari doesn't upscale an already-rasterized
+              layer, which visibly blurs the logo. Absolute positioning keeps it from
+              growing the header bar's own height; the grid's fixed-width first column
+              (matching this element's old untransformed footprint) keeps the nav and
+              right-side buttons exactly where they were. */}
+          <div
+            onDoubleClick={() => router.push("/")}
+            className="absolute left-[-26.7px] top-[calc(50%+5px)] z-10 flex -translate-y-1/2 sm:left-[-43.3px] lg:left-[-50px] lg:top-[calc(50%+10px)]"
+          >
             <Logo size="header" />
           </div>
 

@@ -4,10 +4,12 @@ import logo from "../../../public/brand/Logo without mascot.svg";
 
 const SIZES = {
   default: "h-[206.1px] w-auto sm:h-[235.2px] lg:h-[265px]",
-  // Sized to nearly fill the header bar's height (minus its fixed vertical padding), used in the header only.
-  // Visually enlarged via a uniform transform scale in the header itself, this is the layout-box size,
-  // which keeps the header bar's own height unaffected (CSS transforms don't participate in layout).
-  header: "h-16 w-auto sm:h-20 lg:h-24",
+  // Rendered directly at final display size (not scaled up via CSS transform) so the
+  // browser rasterizes the SVG at true resolution — WebKit/Safari visibly blurs an
+  // element enlarged via `transform: scale()` because it upscales an already-rasterized
+  // layer instead of re-rendering the vector source. The header positions this
+  // absolutely (see header.tsx) so its real size doesn't grow the header bar's height.
+  header: "h-[153px] w-auto sm:h-[191px] lg:h-[229px]",
 } as const;
 
 export function Logo({ className = "", size = "default" }: { className?: string; size?: keyof typeof SIZES }) {

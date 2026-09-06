@@ -21,7 +21,13 @@ const cspDirectives = [
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'self'",
-  "upgrade-insecure-requests",
+  // Forces every subresource to HTTPS. Correct in production (paired with
+  // HSTS below); in dev it silently breaks LAN-IP testing (e.g.
+  // http://192.168.1.x:3000) because browsers only exempt localhost/127.0.0.1
+  // from this upgrade, not arbitrary local network IPs, so every asset
+  // request gets rewritten to https:// against a server that only speaks
+  // plain HTTP and fails with no visible error (unstyled page, broken images).
+  ...(isDev ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
 
 const securityHeaders = [
@@ -34,7 +40,13 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["127.0.0.1", "localhost"],
+  allowedDevOrigins: ["127.0.0.1", "localhost", "192.168.1.6"],
+  images: {
+    // Default (75) visibly softens real photography (job-site photos, before/after
+    // comparisons). Explicitly allow the higher values used via the `quality` prop
+    // on hero/showcase <Image> components across the site.
+    qualities: [75, 90, 92, 95],
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

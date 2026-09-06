@@ -57,9 +57,9 @@ export function ServicePageTemplate({ service }: { service: Service }) {
                 </a>
               </div>
             </div>
-            <div className="relative mx-auto w-[80%]">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-[var(--shadow-premium)]">
-              <Image src={service.heroImage} alt={service.name} fill priority sizes="(min-width: 1024px) 32vw, 80vw" className="object-cover" />
+            <div className="relative mx-auto w-full">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] shadow-[var(--shadow-premium)]">
+              <Image src={service.heroImage} alt={service.name} fill priority quality={90} sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
               <div aria-hidden className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 50%, rgba(13,20,40,0.55) 100%)" }} />
               <div className="absolute left-5 top-5 glass rounded-2xl px-3.5 py-2.5 text-xs font-medium">
                 <span className="flex items-center gap-2">
@@ -73,7 +73,7 @@ export function ServicePageTemplate({ service }: { service: Service }) {
       </section>
 
       {/* Problem / Solution */}
-      <section className="bg-surface py-24 md:py-32">
+      <section className="bg-surface py-16 md:py-20">
         <div className="container-px mx-auto max-w-[1400px]">
           <Reveal className="grid gap-12 lg:grid-cols-2 lg:gap-20">
             <div>
@@ -113,7 +113,7 @@ export function ServicePageTemplate({ service }: { service: Service }) {
       </section>
 
       {/* Benefits */}
-      <section className="py-24 md:py-32">
+      <section className="py-16 md:py-20">
         <div className="container-px mx-auto max-w-[1400px]">
           <Reveal className="max-w-2xl">
             <span className="chip">Why it&rsquo;s worth it</span>
@@ -141,7 +141,7 @@ export function ServicePageTemplate({ service }: { service: Service }) {
       </section>
 
       {/* Process */}
-      <section className="bg-surface py-24 md:py-32">
+      <section className="bg-surface py-16 md:py-20">
         <div className="container-px mx-auto max-w-[1400px]">
           <Reveal className="max-w-2xl">
             <span className="chip">How it works</span>
@@ -154,7 +154,7 @@ export function ServicePageTemplate({ service }: { service: Service }) {
       <ReviewsSection />
 
       {/* FAQ */}
-      <section className="bg-surface py-24 md:py-32">
+      <section className="bg-surface py-16 md:py-20">
         <div className="container-px mx-auto max-w-[1400px]">
           <Reveal className="grid gap-12 lg:grid-cols-[1fr_2fr] lg:gap-20">
             <div>
@@ -173,7 +173,7 @@ export function ServicePageTemplate({ service }: { service: Service }) {
 
       {/* Related services */}
       {related.length > 0 && (
-        <section className="py-24 md:py-32">
+        <section className="py-16 md:py-20">
           <div className="container-px mx-auto max-w-[1400px]">
             <Reveal>
               <div className="flex items-end justify-between gap-8">

@@ -68,6 +68,7 @@ export function LocationPageTemplate({ location }: { location: Location }) {
                 alt={`${location.city}, WA`}
                 fill
                 priority
+                quality={90}
                 sizes="(min-width: 1024px) 32vw, 80vw"
                 className="object-cover"
               />
