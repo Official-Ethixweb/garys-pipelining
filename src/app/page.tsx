@@ -20,6 +20,7 @@ import { TrustStrip } from "@/components/sections/trust-strip";
 import { BeforeAfterSlider } from "@/components/sections/before-after-slider";
 import { ReviewsSection } from "@/components/sections/reviews-section";
 import { HomeCoverageSection } from "@/components/sections/home-coverage-section";
+import { SpecialsSection } from "@/components/sections/specials-section";
 import { TestimonialCarousel } from "@/components/sections/testimonial-carousel";
 import { FaqAccordion } from "@/components/ui/faq-accordion";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -182,6 +183,8 @@ export default function Home() {
         </Reveal>
       </div>
 
+      <SpecialsSection />
+
       {/* SERVICES */}
       <section id="services" className="relative py-24 md:py-32">
         <div className="container-px mx-auto max-w-[1400px]">
@@ -269,7 +272,7 @@ export default function Home() {
                   }`}
                 >
                   <div className="relative aspect-[5/4] overflow-hidden lg:aspect-auto">
-                    <Image src={t.img} alt={t.name} fill loading="lazy" sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover transition-transform duration-700 hover:scale-[1.03]" />
+                    <Image src={t.img} alt={t.name} fill loading="lazy" quality={90} sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover transition-transform duration-700 hover:scale-[1.03]" />
                   </div>
                   <div className="flex flex-col justify-center p-8 md:p-12">
                     <span className="text-xs font-medium uppercase tracking-[0.2em] text-primary">0{i + 1} &middot; Method</span>
@@ -304,6 +307,7 @@ export default function Home() {
                 alt="Gary's Pipelining crew on a job site"
                 fill
                 loading="lazy"
+                quality={90}
                 sizes="(min-width: 1024px) 40vw, 100vw"
                 className="object-cover"
               />
