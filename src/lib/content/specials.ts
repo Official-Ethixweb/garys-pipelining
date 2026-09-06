@@ -5,6 +5,7 @@ export type Special = {
   description: string;
   icon: string;
   href?: string;
+  ctaLabel?: string;
   footnote?: "combo" | "cleanout";
 };
 
@@ -25,6 +26,8 @@ export const specials: Special[] = [
     title: "Any Service Call",
     description: "Applied to any repair, inspection, or cleaning we quote on site.",
     icon: "Wrench",
+    href: "/contact",
+    ctaLabel: "Claim this offer",
     footnote: "combo",
   },
   {

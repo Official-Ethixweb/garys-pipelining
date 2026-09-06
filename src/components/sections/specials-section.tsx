@@ -42,7 +42,7 @@ export function SpecialsGrid() {
                 <p className="mt-3 flex-1 text-pretty text-[15px] leading-relaxed text-muted-foreground">{s.description}</p>
                 {s.href && (
                   <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-primary link-underline">
-                    Learn more <ArrowRight className="h-3.5 w-3.5" />
+                    {s.ctaLabel ?? "Learn more"} <ArrowRight className="h-3.5 w-3.5" />
                   </span>
                 )}
               </div>
