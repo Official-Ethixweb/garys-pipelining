@@ -17,14 +17,14 @@ export function ServiceAreaMap({ locations }: { locations: Location[] }) {
 
       <div className="flex flex-col">
         <span className="chip self-start">Our service area</span>
-        <h3 className="mt-4 text-2xl tracking-tight text-ink">
+        <h2 className="mt-4 text-2xl tracking-tight text-ink">
           {active.city}, {active.state}
           {active.isHQ && (
             <span className="ml-2 inline-flex items-center rounded-full bg-yellow px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-yellow-foreground align-middle">
               Home base
             </span>
           )}
-        </h3>
+        </h2>
         {active.driveTime && <p className="mt-1.5 text-sm text-muted-foreground">{active.driveTime}</p>}
         <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{active.intro}</p>
 
